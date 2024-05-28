@@ -32,14 +32,16 @@
   },
   "hosting": [
     {
+      "target": "local",
+      "source": ".",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "predeploy": "npm run build"
+    },
+    {
       "target": "dev",
       "source": ".",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "predeploy": "npm run build --configuration=development",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "predeploy": "npm run build-dev",
       "frameworksBackend": {
         "region": "us-central1"
       }
@@ -47,12 +49,8 @@
     {
       "target": "prod",
       "source": ".",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "predeploy": "npm run build --configuration=production",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "predeploy": "npm run build-prod",
       "frameworksBackend": {
         "region": "us-central1"
       }
@@ -69,7 +67,7 @@
       "port": 9000
     },
     "hosting": {
-      "port": 5000
+      "port": 4201
     },
     "storage": {
       "port": 9199

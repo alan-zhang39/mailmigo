@@ -10,6 +10,9 @@
         ],
         "prod": [
           "mailmigo-prod"
+        ],
+        "local": [
+          "local"
         ]
       }
     }
