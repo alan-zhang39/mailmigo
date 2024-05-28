@@ -13,10 +13,9 @@
     {{ this.countService.countWithInitial() }}
   </p>
 
-  <button
-    class="border-2 border-black px-10 py-5 text-xl rounded-xl"
-    (click)="this.countService.addToCount()"
-  >
-    Add to count
-  </button>
+  <!-- A 'bind' is necessary to preserve context -->
+  <app-button
+    [text]="'Add to Count'"
+    [callback]="this.countService.addToCount"
+  />
 </div>
