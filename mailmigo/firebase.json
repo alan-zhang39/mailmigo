@@ -1,17 +1,6 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "venv",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    },
-    {
       "source": "functions/main-ts",
       "codebase": "main-ts",
       "ignore": [
@@ -40,5 +29,12 @@
   ],
   "storage": {
     "rules": "storage.rules"
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
   }
 }
