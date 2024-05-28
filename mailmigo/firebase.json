@@ -35,6 +35,7 @@
       "target": "dev",
       "source": ".",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "predeploy": "npm run build --configuration=development",
       "frameworksBackend": {
         "region": "us-central1"
       }
@@ -43,6 +44,7 @@
       "target": "prod",
       "source": ".",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "predeploy": "npm run build --configuration=production",
       "frameworksBackend": {
         "region": "us-central1"
       }
