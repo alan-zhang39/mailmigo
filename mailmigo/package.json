@@ -4,7 +4,14 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "deploy-preview": "git rev-parse --abbrev-ref HEAD | xargs -I {} firebase hosting:channel:deploy {}",
+    "deploy-hosting": "firebase deploy --only hosting:prod",
+    "deploy-hosting-prod": "firebase deploy --only hosting:prod",
+    "deploy": "firebase deploy",
+    "deploy-prod": "firebase deploy",
+    "build": "ng build --configuration=local",
+    "build-dev": "ng build --configuration=development",
+    "build-prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

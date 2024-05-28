@@ -1,5 +1,19 @@
 {
   "projects": {
     "default": "mailmigo-dev"
-  }
+  },
+  "targets": {
+    "mailmigo-dev": {
+      "hosting": {
+        "dev": [
+          "mailmigo-dev"
+        ],
+        "prod": [
+          "mailmigo-prod"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
