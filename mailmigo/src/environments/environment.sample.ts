@@ -1,12 +1,7 @@
-import { FirebaseOptions } from '@angular/fire/app';
+import { Environment, EnvironmentType } from './types';
 
-export interface Environment {
-  production: boolean;
-  firebaseConfig: FirebaseOptions;
-}
-
-export const environment: Environment = {
-  production: false,
+const environment: Environment = {
+  type: EnvironmentType.LOCAL,
   firebaseConfig: {
     apiKey: '',
     authDomain: '',
@@ -17,3 +12,5 @@ export const environment: Environment = {
     appId: '',
   },
 };
+
+export default environment;

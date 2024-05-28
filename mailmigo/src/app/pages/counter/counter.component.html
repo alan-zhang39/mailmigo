@@ -2,9 +2,9 @@
   <p>
     Current count with loading message:
     {{
-      this.countService.count() === undefined
+      this.countService.count().isNone()
         ? "Fetching Count..."
-        : this.countService.count()
+        : this.countService.count().unwrap()
     }}
   </p>
 

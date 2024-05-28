@@ -34,7 +34,11 @@
     {
       "target": "dev",
       "source": ".",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "predeploy": "npm run build --configuration=development",
       "frameworksBackend": {
         "region": "us-central1"
@@ -43,11 +47,36 @@
     {
       "target": "prod",
       "source": ".",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "predeploy": "npm run build --configuration=production",
       "frameworksBackend": {
         "region": "us-central1"
       }
     }
-  ]
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
 }

@@ -4,11 +4,15 @@ import { inject } from '@angular/core';
 import {
   Database,
   TransactionResult,
+  connectDatabaseEmulator,
   objectVal,
   ref,
 } from '@angular/fire/database';
 
 import { runTransaction } from '@angular/fire/database';
+import { Option } from '@shared/types/rust/option';
+import environment from '@environment';
+import { EnvironmentType } from 'src/environments/types';
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +20,23 @@ import { runTransaction } from '@angular/fire/database';
 export class DatabaseService {
   private database = inject(Database);
 
-  constructor() { }
+  constructor() {
+    if (environment.type == EnvironmentType.LOCAL) {
+      // Point to the RTDB emulator running on localhost.
+      connectDatabaseEmulator(this.database, '127.0.0.1', 9000);
+    }
+  }
 
   // Used if want to handle undefined case while fetching.
   public observe<T extends string | number | boolean | object>(
     path: string,
-  ): Signal<T | undefined> {
+  ): Signal<Option<T>> {
     const dbRef = ref(this.database, path);
     const obs$ = objectVal<T>(dbRef);
     const signal = toSignal<T>(obs$);
-    return signal;
+    return computed(() =>
+      signal() !== undefined ? Option.Some(signal() as T) : Option.None(),
+    );
   }
 
   // Used if want to handle given initial value while fetching.
