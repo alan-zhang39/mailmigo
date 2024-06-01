@@ -32,28 +32,28 @@
   },
   "hosting": [
     {
-      "target": "local",
-      "source": ".",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "predeploy": "npm run build"
-    },
-    {
       "target": "dev",
-      "source": ".",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "predeploy": "npm run build-dev",
-      "frameworksBackend": {
-        "region": "us-central1"
-      }
+      "public": "dist/mailmigo/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     },
     {
       "target": "prod",
-      "source": ".",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "predeploy": "npm run build-prod",
-      "frameworksBackend": {
-        "region": "us-central1"
-      }
+      "public": "dist/mailmigo/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ],
   "emulators": {

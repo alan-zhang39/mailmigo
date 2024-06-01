@@ -6,7 +6,7 @@
     "start": "ng serve",
     "start-dev": "ng serve --configuration=development",
     "deploy-preview": "git rev-parse --abbrev-ref HEAD | xargs -I {} firebase hosting:channel:deploy {}",
-    "deploy-hosting": "firebase deploy --only hosting:prod",
+    "deploy-hosting": "firebase deploy --only hosting:dev",
     "deploy-hosting-prod": "firebase deploy --only hosting:prod",
     "deploy": "firebase deploy",
     "deploy-prod": "firebase deploy",
