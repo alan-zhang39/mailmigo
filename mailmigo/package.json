@@ -4,9 +4,19 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start-dev": "ng serve --configuration=development",
+    "deploy-preview": "git rev-parse --abbrev-ref HEAD | xargs -I {} firebase hosting:channel:deploy {}",
+    "deploy-hosting": "firebase deploy --only hosting:dev",
+    "deploy-hosting-prod": "firebase deploy --only hosting:prod",
+    "deploy": "firebase deploy",
+    "deploy-prod": "firebase deploy",
+    "build": "ng build --configuration=local",
+    "build-dev": "ng build --configuration=development",
+    "build-prod": "ng build --configuration=production",
+    "watch": "ng build --watch --configuration local",
+    "test": "ng test",
+    "emulators": "firebase emulators:start --only auth,database,functions,storage,hosting:local --import=./.firebase/emulator-cache --export-on-exit",
+    "emulators-no-cache": "firebase emulators:start"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +31,7 @@
     "@angular/router": "^18.0.0",
     "firebase-tools": "^13.10.1",
     "rxjs": "~7.8.0",
+    "shared": "file:shared",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

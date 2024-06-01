@@ -1,11 +1,12 @@
 import { Injectable, Signal } from '@angular/core';
 import { DatabaseService } from './database.service';
+import { Option } from '@shared/types/rust/option';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CounterService {
-  count: Signal<number | undefined>;
+  count: Signal<Option<number>>;
   countWithInitial: Signal<number>;
 
   constructor(private db: DatabaseService) {
