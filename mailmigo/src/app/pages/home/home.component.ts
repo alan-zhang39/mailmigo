@@ -9,4 +9,4 @@ import { GreetingComponent } from './components/greeting/greeting.component';
   templateUrl: './home.component.html',
   styles: ``,
 })
-export class HomeComponent { }
+export class HomeComponent {}

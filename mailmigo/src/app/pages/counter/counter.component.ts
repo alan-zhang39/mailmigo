@@ -10,5 +10,5 @@ import { ButtonComponent } from '../../components/button/button.component';
   styles: ``,
 })
 export class CounterComponent {
-  constructor(public countService: CounterService) { }
+  constructor(public countService: CounterService) {}
 }
