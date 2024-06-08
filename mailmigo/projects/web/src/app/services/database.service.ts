@@ -10,9 +10,9 @@ import {
 } from '@angular/fire/database';
 
 import { runTransaction } from '@angular/fire/database';
+import environment from '@environments/environment';
+import { EnvironmentType } from '@environments/types';
 import { Option } from '@shared/types/rust/option';
-import environment from '@environment';
-import { EnvironmentType } from 'src/environments/types';
 
 @Injectable({
   providedIn: 'root',

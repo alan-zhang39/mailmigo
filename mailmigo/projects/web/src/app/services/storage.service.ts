@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Storage, connectStorageEmulator } from '@angular/fire/storage';
-import environment from '@environment';
-import { EnvironmentType } from 'src/environments/types';
+import environment from '@environments/environment';
+import { EnvironmentType } from '@environments/types';
 
 @Injectable({
   providedIn: 'root',

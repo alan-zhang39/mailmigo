@@ -1,6 +1,5 @@
 import { RouterOutlet } from '@angular/router';
 import { Component, inject } from '@angular/core';
-import { Database } from '@angular/fire/database';
 
 @Component({
   selector: 'app-root',

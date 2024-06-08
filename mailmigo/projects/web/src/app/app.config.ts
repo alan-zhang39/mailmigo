@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import environment from '@environment';
+import environment from '@environments/environment';
 
 // Firebase
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';

@@ -1,6 +1,6 @@
 import { Component, effect } from '@angular/core';
-import { CounterService } from '../../services/counter.service';
-import { ButtonComponent } from '../../components/button/button.component';
+import { ButtonComponent } from '@components/button/button.component';
+import { CounterService } from '@services/counter.service';
 
 @Component({
   selector: 'app-counter',
@@ -10,5 +10,5 @@ import { ButtonComponent } from '../../components/button/button.component';
   styles: ``,
 })
 export class CounterComponent {
-  constructor(public countService: CounterService) {}
+  constructor(public countService: CounterService) { }
 }
