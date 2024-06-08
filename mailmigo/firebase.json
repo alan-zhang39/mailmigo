@@ -34,7 +34,7 @@
     {
       "target": "dev",
       "predeploy": "npm run build:dev",
-      "public": "dist/web/browser",
+      "public": "dist/out-tsc/web/browser",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
@@ -46,7 +46,7 @@
     {
       "target": "prod",
       "predeploy": "npm run build:prod",
-      "public": "dist/web/browser",
+      "public": "dist/out-tsc/web/browser",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
