@@ -14,7 +14,7 @@
     "deploy:hosting:prod": "firebase deploy --only hosting:prod",
     "deploy": "firebase deploy",
     "deploy:prod": "firebase deploy",
-    "emulators": "firebase emulators:start --only auth,database,functions,storage,hosting:local --import=./.firebase/emulator-cache --export-on-exit",
+    "emulators": "npm --prefix ./projects/functions/main-ts run build:watch & firebase emulators:start --only auth,database,functions,storage,hosting:local --import=./.firebase/emulator-cache --export-on-exit",
     "emulators-no-cache": "firebase emulators:start",
     "build:shared": "cd projects/shared && tsc"
   },
