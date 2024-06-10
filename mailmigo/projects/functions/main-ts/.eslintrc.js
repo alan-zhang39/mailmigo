@@ -18,16 +18,19 @@ module.exports = {
     sourceType: "module",
   },
   ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
+    "/dist/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
+    "/*shared/**/*",
   ],
   plugins: [
     "@typescript-eslint",
     "import",
   ],
   rules: {
-    "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "object-curly-spacing": 0,
+    "quotes": 0,
+    "require-jsdoc": 0,
   },
 };

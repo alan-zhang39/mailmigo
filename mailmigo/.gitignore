@@ -48,3 +48,4 @@ src/environments/**.ts
 
 # Firebase
 .firebase/
+*.log
