@@ -11,7 +11,10 @@ import { onRequest } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import { TEST_STR } from "*shared";
 import { bedrock } from "./providers/aws";
-import { ListFoundationModelsCommand } from "@aws-sdk/client-bedrock";
+import {
+  ListFoundationModelsCommand,
+  ListFoundationModelsCommandInput,
+} from "@aws-sdk/client-bedrock";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -26,7 +29,9 @@ export const testBedrock = onRequest(async (req, res) => {
     byOutputModality: "TEXT",
     byInferenceType: "ON_DEMAND",
   };
-  const cmd = new ListFoundationModelsCommand(input);
+  const cmd = new ListFoundationModelsCommand(
+    <ListFoundationModelsCommandInput>input,
+  );
   try {
     const aws_res = await bedrock.send(cmd);
     res.json(aws_res);
