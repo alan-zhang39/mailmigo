@@ -7,14 +7,31 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import { onRequest } from 'firebase-functions/v2/https';
-import * as logger from 'firebase-functions/logger';
-import { TEST_STR } from '@shared/test';
+import { onRequest } from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
+import { TEST_STR } from "*shared";
+import { bedrock } from "./providers/aws";
+import { ListFoundationModelsCommand } from "@aws-sdk/client-bedrock";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
 export const helloWorld = onRequest((request, response) => {
-  logger.info('Hello logs!', { structuredData: true });
+  logger.info("Hello logs!", { structuredData: true });
   response.send(TEST_STR);
+});
+
+export const testBedrock = onRequest(async (req, res) => {
+  const input = {
+    byOutputModality: "TEXT",
+    byInferenceType: "ON_DEMAND",
+  };
+  const cmd = new ListFoundationModelsCommand(input);
+  try {
+    const aws_res = await bedrock.send(cmd);
+    res.json(aws_res);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
 });

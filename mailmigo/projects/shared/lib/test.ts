@@ -1,1 +1,1 @@
-export const TEST_STR = 'This is a test string';
+export const TEST_STR = 'This is a test string\n';
