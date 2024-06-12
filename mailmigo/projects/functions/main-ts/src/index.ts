@@ -51,7 +51,7 @@ export const testBedrock = onRequest(async (req, res) => {
 export const on_transcription_upload_gen_summary = onValueCreated(
   "/transcriptions/{orgId}/{uid}/{documentId}",
   async (event) => {
-    const { uid, documentId } = event.params;
+    const { orgId, uid, documentId } = event.params;
 
     // Grab the current value of what was written to the Realtime Database.
     const transcription_content = event.data.val();
@@ -75,7 +75,7 @@ export const on_transcription_upload_gen_summary = onValueCreated(
 
     // Create the new reference path for the summary
     const summaryRef = event.data.ref.root.child(
-      `generations/summary/${uid}/${documentId}`
+      `generations/summary/${orgId}/${uid}/${documentId}`
     );
 
     // Write the summary text to the new location
