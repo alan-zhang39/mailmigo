@@ -39,7 +39,11 @@
       "target": "local",
       "predeploy": "npm run build",
       "public": "dist/out-tsc/web/browser",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -51,7 +55,11 @@
       "target": "dev",
       "predeploy": "npm run build:dev",
       "public": "dist/out-tsc/web/browser",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -63,7 +71,11 @@
       "target": "prod",
       "predeploy": "npm run build:prod",
       "public": "dist/out-tsc/web/browser",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",

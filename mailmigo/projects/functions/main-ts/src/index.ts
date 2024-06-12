@@ -12,6 +12,14 @@ import * as logger from "firebase-functions/logger";
 import { TEST_STR } from "*shared";
 import { bedrock } from "./providers/aws";
 import { ListFoundationModelsCommand } from "@aws-sdk/client-bedrock";
+import { applicationDefault, initializeApp } from "firebase-admin/app";
+import { onValueCreated } from "firebase-functions/v2/database";
+
+import { openai } from "./providers/openai";
+
+initializeApp({ credential: applicationDefault() });
+
+// const database = getDatabase();
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -35,3 +43,39 @@ export const testBedrock = onRequest(async (req, res) => {
     res.status(500).send(e);
   }
 });
+
+/* Upon transcription upload, use OpenAI to summarize and upload results to generations */
+export const on_transcription_upload_gen_summary = onValueCreated(
+  "/transcriptions/{orgId}/{uid}/{documentId}",
+  async (event) => {
+    const { uid, documentId } = event.params;
+
+    // Grab the current value of what was written to the Realtime Database.
+    const transcription_content = event.data.val();
+
+    // Create summary
+    const summary = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant, who summarizes emails.",
+        },
+        {
+          role: "user",
+          content: `Please summarize the following:\n\n${transcription_content}`,
+        },
+      ],
+      model: "gpt-4o",
+    });
+
+    const summary_text = summary.choices[0].message.content;
+
+    // Create the new reference path for the summary
+    const summaryRef = event.data.ref.root.child(
+      `generations/summary/${uid}/${documentId}`
+    );
+
+    // Write the summary text to the new location
+    return summaryRef.set(summary_text);
+  }
+);
