@@ -61,7 +61,8 @@ export const on_transcription_upload_gen_summary = onValueCreated(
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant, who summarizes emails.",
+          content:
+            "You are a helpful assistant who summarizes documents, such as PDFs, when given a text transcription.",
         },
         {
           role: "user",
