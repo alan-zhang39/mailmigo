@@ -1,6 +1,7 @@
 import { BedrockClient, BedrockClientConfig } from "@aws-sdk/client-bedrock";
 
 import { TextractClient, TextractClientConfig } from "@aws-sdk/client-textract";
+import "dotenv/config";
 
 const aws_default_config = {
   region: "us-east-1",
@@ -11,9 +12,9 @@ const aws_default_config = {
 };
 
 export const bedrock = new BedrockClient(
-  <BedrockClientConfig>aws_default_config,
+  <BedrockClientConfig>aws_default_config
 );
 
 export const textract = new TextractClient(
-  <TextractClientConfig>aws_default_config,
+  <TextractClientConfig>aws_default_config
 );
