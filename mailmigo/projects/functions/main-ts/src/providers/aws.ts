@@ -3,7 +3,7 @@ import { BedrockClient, BedrockClientConfig } from "@aws-sdk/client-bedrock";
 import { TextractClient, TextractClientConfig } from "@aws-sdk/client-textract";
 import "dotenv/config";
 
-const aws_default_config = {
+const awsDefaultConfig = {
   region: "us-east-1",
   credentials: {
     accessKeyId: process.env["AWS_ACCESS_KEY_ID"],
@@ -12,9 +12,9 @@ const aws_default_config = {
 };
 
 export const bedrock = new BedrockClient(
-  <BedrockClientConfig>aws_default_config
+  awsDefaultConfig as BedrockClientConfig,
 );
 
 export const textract = new TextractClient(
-  <TextractClientConfig>aws_default_config
+  awsDefaultConfig as TextractClientConfig,
 );

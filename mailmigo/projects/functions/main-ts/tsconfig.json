@@ -7,8 +7,9 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "skipLibCheck": true
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src", "lib"]
 }

@@ -21,6 +21,7 @@ module.exports = {
     "/dist/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
     "/*shared/**/*",
+    "**/node_modules/**/*",
   ],
   plugins: [
     "@typescript-eslint",
@@ -32,5 +33,10 @@ module.exports = {
     "object-curly-spacing": 0,
     "quotes": 0,
     "require-jsdoc": 0,
+    "max-len": ["error", {
+      "ignoreStrings": true,
+      "ignoreTemplateLiterals": true,
+    }],
+    "camelcase": "off",
   },
 };
