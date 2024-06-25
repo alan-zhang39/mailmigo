@@ -1,80 +1,100 @@
 {
-  "functions": [
-    {
-      "source": "functions/main-ts",
-      "codebase": "main-ts",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
-    },
-    {
-      "source": "functions/main-py",
-      "codebase": "main-py",
-      "ignore": [
-        "venv",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    }
-  ],
-  "storage": {
-    "rules": "storage.rules"
-  },
-  "hosting": [
-    {
-      "target": "dev",
-      "predeploy": "npm run build-dev",
-      "public": "dist/mailmigo/browser",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
+    "functions": [{
+            "source": "projects/functions/main-ts",
+            "codebase": "main-ts",
+            "ignore": [
+                "node_modules",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log",
+                "*.local"
+            ],
+            "predeploy": [
+                "npm --prefix \"$RESOURCE_DIR\" run sync-shared",
+                "npm --prefix \"$RESOURCE_DIR\" run lint",
+                "npm --prefix \"$RESOURCE_DIR\" run build"
+            ]
+        },
         {
-          "source": "**",
-          "destination": "/index.html"
+            "source": "projects/functions/main-py",
+            "codebase": "main-py",
+            "ignore": [
+                "venv",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log",
+                "*.local"
+            ]
         }
-      ]
-    },
-    {
-      "target": "prod",
-      "predeploy": "npm run build-prod",
-      "public": "dist/mailmigo/browser",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ],
-  "emulators": {
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
-      "port": 5001
-    },
+    ],
     "database": {
-      "port": 9000
-    },
-    "hosting": {
-      "port": 4201
+        "rules": "database.rules.json"
     },
     "storage": {
-      "port": 9199
+        "rules": "storage.rules"
     },
-    "ui": {
-      "enabled": true
-    },
-    "singleProjectMode": true
-  }
+    "hosting": [{
+            "target": "local",
+            "predeploy": "npm run build",
+            "public": "dist/out-tsc/web/browser",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ],
+            "rewrites": [{
+                "source": "**",
+                "destination": "/index.html"
+            }]
+        },
+        {
+            "target": "dev",
+            "predeploy": "npm run build:dev",
+            "public": "dist/out-tsc/web/browser",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ],
+            "rewrites": [{
+                "source": "**",
+                "destination": "/index.html"
+            }]
+        },
+        {
+            "target": "prod",
+            "predeploy": "npm run build:prod",
+            "public": "dist/out-tsc/web/browser",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ],
+            "rewrites": [{
+                "source": "**",
+                "destination": "/index.html"
+            }]
+        }
+    ],
+    "emulators": {
+        "auth": {
+            "port": 9099
+        },
+        "functions": {
+            "port": 5001
+        },
+        "database": {
+            "port": 9000
+        },
+        "hosting": {
+            "port": 4201
+        },
+        "storage": {
+            "port": 9199
+        },
+        "ui": {
+            "enabled": true
+        },
+        "singleProjectMode": true
+    }
 }

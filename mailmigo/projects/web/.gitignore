@@ -1,0 +1,6 @@
+node_modules/
+
+# Environments
+src/environments/**.ts
+!src/environments/environment.sample.ts
+!src/environments/types.ts

@@ -1,0 +1,155 @@
+# Welcome to Cloud Functions for Firebase for Python!
+# To get started, simply uncomment the below code or create your own.
+# Deploy with `firebase deploy`
+
+from firebase_functions import https_fn, db_fn
+from firebase_admin import initialize_app
+from providers.pinecone import index
+from providers.openai import client, MODEL, CHAT_MODEL
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import uuid
+from firebase_admin import db
+import json
+import datetime
+
+initialize_app()
+
+
+@https_fn.on_request()
+def on_request_example(req: https_fn.Request) -> https_fn.Response:
+    return https_fn.Response("Hello world!")
+
+
+@https_fn.on_request()
+def pinecone_test(req: https_fn.Request) -> https_fn.Response:
+    results = list(index.list())
+    print("first 5 ids:", [results[0][i] for i in range(0, 5)])
+    return https_fn.Response(results[0] if len(results[0]) != 0 else "No results in index\n")
+
+
+# export interface Transcription {
+#   id: string;
+#   uid: string;
+#   orgId: string;
+#   documentId: string;
+#   content: string;
+#   createdOn: number;
+# }
+
+@db_fn.on_value_written(reference="/transcriptions/{orgId}/{uid}/{documentId}")
+# Get transcription content -> chunk content -> embed content -> upsert into Pinecone index
+def on_transcription_upload(event: db_fn.Event[db_fn.Change]) -> None:
+    # transcription was deleted
+    if event.data.after is None:
+        return
+
+    before = event.data.before
+    after = event.data.after
+
+    # transcription was updated. diff before and after for new child
+    if event.data.before is not None:
+        transcription = {k: after[k] for k in set(after) - set(before)}.values()
+    else:
+        transcription = event.data.after.values()
+
+    # remove key; get transcription object; get content
+    content = next(iter(transcription))["content"]
+    chunked_text = chunk_text(content)
+    embed_and_upsert(chunked_text, 32)
+
+
+@https_fn.on_request()
+def generate_chat_response(req: https_fn.Request) -> https_fn.Response:
+    if req.method != "POST":
+        return https_fn.Response("Please send POST request.", status=405)
+    if "documentId" not in req.args:
+        return https_fn.Response("Missing documentId query parameter.", status=404)
+    # For now, not checking if documentId is valid (ie real document), can change later if needed
+
+    # Convert bytes to dict
+    message = json.loads(req.data.decode("UTF-8"))
+
+    # https://stackoverflow.com/questions/11875770/how-can-i-overcome-datetime-datetime-not-json-serializable
+    message["timestamp"] = json.dumps(datetime.datetime.now(), indent=4, sort_keys=True, default=str)
+    message["isResponse"] = False
+    message["documentId"] = req.args["documentId"]
+
+    # Insert in DB
+    messages_ref = db.reference(f"chatMessages/{message["documentId"]}")
+    messages_ref.push(message)
+
+    embedding = embed_and_upsert([message["content"]], 1)[0][1]
+    closest = index.query(vector=[embedding], top_k=10, include_metadata=True)["matches"]
+    closest_text = [d["metadata"]["text"] for d in closest]
+
+    # "a","b","c"
+    formatted_closest_text = ','.join(['"{}"'.format(value) for value in closest_text])
+
+    chat_completion_messages = [{"role": "system",
+                                 "content": "You are a helpful assistant who answers user questions. "
+                                            "The user will provide context as a comma delimited list of quotation wrapped strings"},
+                                {"role": "user",
+                                 "content": message["content"] + "\n\nContext: " + formatted_closest_text}]
+
+    response = client.chat.completions.create(model=CHAT_MODEL, messages=chat_completion_messages)
+
+    child_ref = messages_ref.push()
+    child_ref.set({"id": child_ref.key,
+                   "documentId": message["documentId"],
+                   "content": response.choices[0].message.content,
+                   # https://stackoverflow.com/questions/11875770/how-can-i-overcome-datetime-datetime-not-json-serializable
+                   "timestamp": json.dumps(datetime.datetime.now(), indent=4, sort_keys=True, default=str),
+                   "isResponse": True, })
+
+    return https_fn.Response(child_ref.key)
+
+
+@https_fn.on_request()
+def get_all_chat_messages(req: https_fn.Request) -> https_fn.Response:
+    if req.method != "GET":
+        return https_fn.Response("Please send GET request.", status=405)
+    if "documentId" not in req.args:
+        return https_fn.Response("Missing documentId query parameter.", status=404)
+
+    message_ref = db.reference("chatMessages/" + req.args["documentId"])
+    messages = message_ref.get()
+    
+    if messages is None:
+        return https_fn.Response([])
+
+    return https_fn.Response(json.dumps(messages))
+
+
+def chunk_text(text: str) -> list[str]:
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=256,
+        chunk_overlap=20
+    )
+    return text_splitter.split_text(text)
+
+
+# Return format: [(id1, embed1, meta1), (id2, embed2, meta2), ...]
+def embed_and_upsert(chunked_text: list[str], batch_size: int) -> list[tuple]:
+    for i in range(0, len(chunked_text), batch_size):
+        # set end position of batch
+        i_end = min(i + batch_size, len(chunked_text))
+
+        # get batch of lines and IDs
+        lines_batch = chunked_text[i: i + batch_size]
+        ids_batch = [str(uuid.uuid4()) for n in range(i, i_end)]
+
+        # create embeddings
+        res = client.embeddings.create(input=lines_batch, model=MODEL)
+        embeds = [record.embedding for record in res.data]
+
+        # prep metadata and upsert batch
+        meta = [{'text': line} for line in lines_batch]
+        to_upsert = zip(ids_batch, embeds, meta)
+
+        # upsert erases upserted list, so we need to make a copy. might be really inefficient? idk
+        to_upsert_copy = list(zip(ids_batch, embeds, meta))
+
+        # upsert to Pinecone
+        index.upsert(vectors=list(to_upsert))
+
+        return to_upsert_copy

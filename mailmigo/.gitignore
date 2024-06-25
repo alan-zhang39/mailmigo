@@ -40,10 +40,13 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.editorconfig
 
-# Environments
+# Env files
 src/environments/**.ts
 !src/environments/environment.sample.ts
+!src/environments/types.ts
 
 # Firebase
 .firebase/
+*.log
