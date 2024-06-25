@@ -1,4 +1,4 @@
-name: 'Check PR to Main'
+name: "Check PR to Main"
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check branch
-        if: github.base_ref == 'main' && startsWith(github.head_ref, 'feature/') != true
+        if: github.base_ref == 'main' && startsWith(github.head_ref, 'release/') != true
         run: |
           echo "ERROR: You can only merge to main from a release branch."
           exit 1
