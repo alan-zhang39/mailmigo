@@ -9,7 +9,7 @@
  */
 
 import { applicationDefault, initializeApp } from "firebase-admin/app";
-
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 // Setup
 const config = JSON.parse(process.env["FIREBASE_CONFIG"]!);
 
@@ -18,7 +18,6 @@ initializeApp({
   databaseURL: config.databaseURL,
   storageBucket: config.storageBucket,
 });
-
 import { onValueCreated } from "firebase-functions/v2/database";
 import {
   onObjectFinalized,
@@ -41,12 +40,53 @@ import * as logger from "firebase-functions/logger";
 import { onEmailReceived } from "./routes/gmail";
 import { convert } from "pdf-img-convert";
 import { onSummaryUploadSendReply } from "./triggers/replies";
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+import {User} from "*shared/lib/types/user"
 
 const storage = getStorage();
 const db = getDatabase();
+
+exports.user = onCall({cors: true}, (request) => {
+  if(request.data.type === 'Create'){
+    return handleSignUpRequest(request.data.user)
+  }
+  return new Promise(function(resolve) {
+    resolve({status: 400, body: "Invalid request type"});
+  });
+});
+ 
+   
+  async function handleSignUpRequest(data: User){  
+    const current_time = new Date().toUTCString()
+    const ret = await writeUserData(data, current_time);
+    if (!ret){
+      logger.error("Error creating user in RTDB.")
+      throw new HttpsError("internal", "Error creating user in RTDB.");
+    }
+    return new Promise(function(resolve){
+      resolve({status: 200, body: "User created in RTDB"});
+    });
+  };  
+  
+
+  async function writeUserData(user: User, current_time: String) {
+    if (user != null){
+      const database_ref = db.ref(`users/${user.id}`);
+      await database_ref.set({
+        userId: user.id,
+        email: user.email,
+        name: user.displayName,
+        orgId: user.orgId,
+        profile_picture : user.pfpURL,
+        provider: user.provider,
+        createdOn: current_time
+      });
+      return true
+    }else{
+      logger.info("Error creating user in RTDB.")
+      return false
+    }
+  }
+
 /*
  * Create a transcription entry in the RTDB and
  * storage for any PDF uploaded to storage.
@@ -220,16 +260,17 @@ exports.onTranscriptionUploadGenSummary = onValueCreated(
     const transcription: Transcription = event.data.val();
     const transcriptionContent = transcription.content;
 
-    // Create summary
-    const summary = await openai.chat.completions.create({
-      messages: [
-        {
+// Create summary
+const summary = await openai.chat.completions.create({
+messages: [
+{
           role: "system",
-          content:
-            "You are a helpful assistant who summarizes documents, such as PDFs, when given a text transcription.",
-        },
-        {
+content:
+"You are a helpful assistant who summarizes documents, such as PDFs, when given a text transcription.",
+},
+{
           role: "user",
+
           content: `Please provide a plaintext summarization of the following: \n\n${transcriptionContent}`,
         },
       ],

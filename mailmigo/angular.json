@@ -29,7 +29,10 @@
                 "input": "projects/web/public"
               }
             ],
-            "styles": ["projects/web/src/styles.css"],
+            "styles": ["projects/web/src/styles.css",
+            "node_modules/ngx-toastr/toastr.css",
+            "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+            "node_modules/primeng/resources/primeng.min.css"],
             "scripts": []
           },
           "configurations": {
@@ -102,11 +105,17 @@
                 "input": "projects/web/public"
               }
             ],
-            "styles": ["projects/web/src/styles.css"],
+            "styles": ["projects/web/src/styles.css",
+            "node_modules/ngx-toastr/toastr.css",
+            "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+            "node_modules/primeng/resources/primeng.min.css"],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
