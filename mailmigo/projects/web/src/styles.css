@@ -1,16 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'ngx-toastr/toastr';
 @import "primeicons/primeicons.css";
-@layer tailwind-base, primeng, tailwind-utilities;
-        
-@layer tailwind-base {
-    @tailwind base;
+@import "primeng/resources/primeng.css";
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+
+body, html {
+  margin: 0;
+  box-sizing: border-box;
 }
 
-@layer tailwind-utilities {
-    @tailwind components;
-    @tailwind utilities;
+@layer tailwind-base {
+  @tailwind base;
 }
+
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+@layer primeng;
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */

@@ -1,0 +1,15 @@
+<div class="p-fluid">
+  <div class="p-field mb-4">
+    <label class="mb-4" >Generation Type</label>
+    <!-- Apologies for doing something insanely scuffed but Primeng is so stubborn that I couldn't do mb-4 --> 
+    <div class="h-[10px]"></div> 
+    <p-dropdown id="generationType" [options]="generationTypes" [(ngModel)]="selectedType" placeholder="Select a type" class=""></p-dropdown>
+  </div>
+  <div class="p-field mb-6">
+    <label class="mb-4">Date</label>
+    <div class="h-[10px]"></div> 
+    <p-calendar id="dateRange" [showIcon]="true" 
+    [showOnFocus]="false" [(ngModel)]="dateRange" selectionMode="range" dateFormat="MM dd, yy"></p-calendar>
+  </div>
+  <button pButton label="Done" (click)="applyFilter()"></button>
+</div>

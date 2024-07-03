@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  corePlugins: {
+    preflight: false,
+  },
   content: ["projects/web/src/**/*.{html,ts}"],
   theme: {
     extend: {
@@ -12,6 +15,9 @@ module.exports = {
       colors: {
         primary: "#000000",
         secondary: "#FFFFFF",
+        grey: {
+          100: "#E0E0E0",
+        },
       },
     },
   },

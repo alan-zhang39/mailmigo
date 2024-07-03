@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { LogoComponent } from '@components/logo/logo.component';
+import { LogoComponent } from '../logo/logo.component';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 
@@ -23,7 +23,7 @@ export class MenuComponent implements OnInit{
     { label: 'Your Data', items:
       [{ label: 'Prompts', icon: 'pi pi-comment' },
       { label: 'Documents', icon: 'pi pi-file-pdf' },
-      { label: 'Generations', icon: 'pi pi-pen-to-square' }]
+      { label: 'Generations', icon: 'pi pi-pen-to-square', route: '/generations' }]
     }
     ]
   }

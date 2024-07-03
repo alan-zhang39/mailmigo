@@ -1,6 +1,7 @@
 <div class="flex">
     <app-menu></app-menu>
-    <div class="ml-[6vw] w-[35vw]">
+    <div class="ml-[6rem]">
+        <h1 *ngIf="headerTitle" class="mt-12">{{ headerTitle }}</h1>
         <router-outlet></router-outlet>
     </div>
 </div>
