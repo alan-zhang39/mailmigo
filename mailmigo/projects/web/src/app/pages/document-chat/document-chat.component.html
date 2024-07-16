@@ -1,0 +1,10 @@
+<p>chat messages</p>
+<ul>
+    <li *ngFor="let chatMessage of chatService.getChatMessages()">{{ JSON.stringify(chatMessage) }}</li>
+</ul>
+
+<form (ngSubmit)="chatService.addMessage()" class="flex flex-col mt-5">
+    <label>Enter a message</label>
+    <input type="text" placeholder="Enter a message..." name="message" required [(ngModel)]="chatService.currentMessage">
+    <input type="submit">
+</form>

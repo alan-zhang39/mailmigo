@@ -1,0 +1,63 @@
+<div *ngIf="!editing && config().isSome()">
+  <div class="mt-6">
+    <label class="mt-10 font-medium" for="org">LLM</label>
+    <input
+      disabled
+      id="llm"
+      class="border-grey-500 mt-1.5 block h-8 rounded-md border bg-white pl-[8px] text-sm"
+      name="llm"
+      [value]="config().unwrap().llm"
+    />
+  </div>
+  <div class="mt-6">
+    <label class="mt-10 font-medium" for="org">Prompt</label>
+    <textarea
+      [disabled]="true"
+      id="prompt"
+      class="border-grey-500 mt-1.5 block h-8 w-[80%] rounded-md border bg-white pl-[8px] text-sm"
+      name="prompt"
+      [value]="config().unwrap().prompt"
+    ></textarea>
+  </div>
+</div>
+<form [formGroup]="form()" *ngIf="editing && config().isSome()">
+  <div class="mt-6">
+    <label class="mt-10 font-medium" for="org">LLM</label>
+    <select formControlName="llm">
+      <option *ngFor="let llm of llms" [ngValue]="llm">
+        {{ llm }}
+      </option>
+    </select>
+  </div>
+  <div class="mt-6">
+    <label class="mt-10 font-medium" for="org">Prompt</label>
+    <textarea
+      id="prompt"
+      class="border-grey-500 mt-1.5 block h-8 rounded-md border bg-white pl-[8px] text-sm"
+      name="userOrg"
+      formControlName="prompt"
+    ></textarea>
+  </div>
+</form>
+
+<button
+  (click)="startEditing()"
+  *ngIf="!editing"
+  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
+>
+  Edit
+</button>
+<button
+  (click)="submit()"
+  *ngIf="editing"
+  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
+>
+  Save
+</button>
+<button
+  (click)="cancel()"
+  *ngIf="editing"
+  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
+>
+  Cancel
+</button>

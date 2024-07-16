@@ -1,9 +1,5 @@
-export interface User {
-    id: string;
-    orgId: string;
-    provider: string;
-    displayName: string;
-    email: string;
-    pfpURL: string;
-    createdOn: string;
-  }
+export interface UserProfile {
+	id: string;
+	orgId: string;
+	createdOn: string;
+}

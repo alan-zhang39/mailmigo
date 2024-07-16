@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuComponent } from '../../components/menu/menu.component';
-import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from "@angular/core";
+import { MenuComponent } from "../../components/menu/menu.component";
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+} from "@angular/router";
+import { filter } from "rxjs/operators";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-layout",
@@ -18,7 +23,7 @@ export class LayoutComponent implements OnInit {
     "": "Dashboard",
     account: "Account",
     organization: "Organization",
-    prompts: "Prompts",
+    configurations: "Configurations",
     documents: "Documents",
     generations: "Generations",
   };

@@ -11,6 +11,7 @@
       "@components/*": ["src/app/components/*"],
       "@guards/*": ["src/app/guards/*"],
       "@services/*": ["src/app/services/*"],
+      "@utils/*": ["src/app/utils/*"],
       "@shared/*": ["../shared/lib/*"]
     }
   },

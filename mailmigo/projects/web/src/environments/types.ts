@@ -1,4 +1,4 @@
-import { FirebaseOptions } from '@angular/fire/app';
+import { FirebaseOptions } from "@angular/fire/app";
 
 export enum EnvironmentType {
   LOCAL,

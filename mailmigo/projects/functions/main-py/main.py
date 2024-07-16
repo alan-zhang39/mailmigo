@@ -11,6 +11,10 @@ import uuid
 from firebase_admin import db
 import json
 import datetime
+from flask_cors import cross_origin
+from typing import Any
+import ast
+import time
 
 initialize_app()
 
@@ -58,25 +62,34 @@ def on_transcription_upload(event: db_fn.Event[db_fn.Change]) -> None:
     embed_and_upsert(chunked_text, 32)
 
 
-@https_fn.on_request()
-def generate_chat_response(req: https_fn.Request) -> https_fn.Response:
-    if req.method != "POST":
-        return https_fn.Response("Please send POST request.", status=405)
-    if "documentId" not in req.args:
-        return https_fn.Response("Missing documentId query parameter.", status=404)
-    # For now, not checking if documentId is valid (ie real document), can change later if needed
+@db_fn.on_value_written(reference="/chatMessages/{documentId}")
+# Chunk, embed, and upsert message content.
+# Generate response to message from OpenAI, using top_k=10 closest matches from Pinecone as context
+# Insert response into DB
+def on_new_user_chat(event: db_fn.Event[db_fn.Change]) -> None:
+    # Weird thing happens where if we listen for value created on chatMessages/{docId}/{messageId}
+    # we get an empty string for event.data
+    # so we listen for written on a given document, compare the prev and after,
+    # and pick out the new message that was added
 
-    # Convert bytes to dict
-    message = json.loads(req.data.decode("UTF-8"))
+    # document tree was deleted
+    if event.data.after is None:
+        return
 
-    # https://stackoverflow.com/questions/11875770/how-can-i-overcome-datetime-datetime-not-json-serializable
-    message["timestamp"] = json.dumps(datetime.datetime.now(), indent=4, sort_keys=True, default=str)
-    message["isResponse"] = False
-    message["documentId"] = req.args["documentId"]
+    before = event.data.before
+    after = event.data.after
 
-    # Insert in DB
-    messages_ref = db.reference(f"chatMessages/{message["documentId"]}")
-    messages_ref.push(message)
+    # document was updated. diff before and after for new message
+    if event.data.before is not None:
+        message = {k: after[k] for k in set(after) - set(before)}.values()
+    else:
+        message = event.data.after.values()
+
+    # Extract message from .values()
+    message = list(message)[0]
+
+    ref_path = f"chatMessages/{message['documentId']}"
+    messages_ref = db.reference(ref_path)
 
     embedding = embed_and_upsert([message["content"]], 1)[0][1]
     closest = index.query(vector=[embedding], top_k=10, include_metadata=True)["matches"]
@@ -87,7 +100,7 @@ def generate_chat_response(req: https_fn.Request) -> https_fn.Response:
 
     chat_completion_messages = [{"role": "system",
                                  "content": "You are a helpful assistant who answers user questions. "
-                                            "The user will provide context as a comma delimited list of quotation wrapped strings"},
+                                            "Context will be provided as a comma delimited list of quotation wrapped strings."},
                                 {"role": "user",
                                  "content": message["content"] + "\n\nContext: " + formatted_closest_text}]
 
@@ -97,11 +110,35 @@ def generate_chat_response(req: https_fn.Request) -> https_fn.Response:
     child_ref.set({"id": child_ref.key,
                    "documentId": message["documentId"],
                    "content": response.choices[0].message.content,
-                   # https://stackoverflow.com/questions/11875770/how-can-i-overcome-datetime-datetime-not-json-serializable
-                   "timestamp": json.dumps(datetime.datetime.now(), indent=4, sort_keys=True, default=str),
+                   "timestamp": int(time.time()),
                    "isResponse": True, })
 
-    return https_fn.Response(child_ref.key)
+
+# @cross_origin()
+# @https_fn.on_request()
+# def create_chat_message(req: https_fn.Request) -> https_fn.Response:
+#     if req.method != "POST":
+#         return https_fn.Response("Please send POST request.", status=405)
+#     if "documentId" not in req.args:
+#         return https_fn.Response("Missing documentId query parameter.", status=404)
+#     # For now, not checking if documentId is valid (ie real document), can change later if needed
+# 
+#     # Convert bytes to dict
+#     message = json.loads(req.data.decode("UTF-8"))
+# 
+#     # Insert in DB
+#     messages_ref = db.reference(f"chatMessages/{req.args["documentId"]}")
+# 
+#     # Important: push empty dict or else firebase treats it as a string and not a dict
+#     child_ref = messages_ref.push({})
+#     child_ref.set({"id": child_ref.key,
+#                    "documentId": req.args["documentId"],
+#                    "content": message["content"],
+#                    # https://stackoverflow.com/questions/11875770/how-can-i-overcome-datetime-datetime-not-json-serializable
+#                    "timestamp": json.dumps(datetime.datetime.now(), indent=4, sort_keys=True, default=str),
+#                    "isResponse": False, })
+# 
+#     return https_fn.Response(child_ref.key)
 
 
 @https_fn.on_request()
@@ -113,7 +150,7 @@ def get_all_chat_messages(req: https_fn.Request) -> https_fn.Response:
 
     message_ref = db.reference("chatMessages/" + req.args["documentId"])
     messages = message_ref.get()
-    
+
     if messages is None:
         return https_fn.Response([])
 

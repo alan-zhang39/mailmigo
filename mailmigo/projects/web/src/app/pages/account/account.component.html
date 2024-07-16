@@ -1,0 +1,62 @@
+<div class="w-[34vw]">
+  <div class="mt-8">
+    <div class="mt-10">
+      <!-- <p-avatar styleClass="float-left" size="xlarge" shape="circle" *ngIf="(this.user().isNone()); else iconTemplate" icon="pi pi-user"></p-avatar> -->
+      <!-- <ng-template #iconTemplate > -->
+      <p-avatar
+        styleClass="float-left"
+        size="xlarge"
+        shape="circle"
+        [icon]="this.user().isNone() ? undefined : 'pi pi-user'"
+        [image]="!this.user().isNone() ? user().unwrap().photoURL ?? '' : ''"
+      ></p-avatar>
+      <!-- </ng-template> -->
+      <div class="ml-[6vw]">
+        <p class="mb-0 pt-1.5 font-medium">
+          {{
+            this.user().isNone()
+              ? "loading..."
+              : this.user().unwrap().displayName
+          }}
+        </p>
+        <p class="mt-1 text-sm font-light text-gray-400">
+          Change profile photo
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="mt-10">
+    <label class="mt-10 font-medium" for="email">Email</label>
+    <input
+      #userEmail
+      disabled
+      id="email"
+      class="border-grey-500 mt-1.5 h-8 w-full rounded-md border bg-white pl-[8px] text-sm"
+      name="userEmail"
+      [value]="this.user().isNone() ? 'loading...' : this.user().unwrap().email"
+    />
+  </div>
+  <div class="mt-6">
+    <label class="mt-10 font-medium" for="org">Organization</label>
+    <input
+      #userOrg
+      disabled
+      id="org"
+      class="border-grey-500 mt-1.5 h-8 w-full rounded-md border bg-white pl-[8px] text-sm"
+      name="userOrg"
+      [value]="'None'"
+    />
+  </div>
+  <button
+    #resetPass
+    (click)="showResetDialog()"
+    type="button"
+    class="border-grey-500 mt-6 h-10 w-[29%] rounded-md border bg-black text-sm font-semibold text-white shadow-md"
+  >
+    Reset Password
+  </button>
+</div>
+
+<div *ngIf="this.user == null" class="flex h-full w-full place-content-center">
+  <p-progressSpinner ariaLabel="loading" />
+</div>

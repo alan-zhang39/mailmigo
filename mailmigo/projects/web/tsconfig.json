@@ -4,8 +4,22 @@
   "extends": "../../tsconfig.json",
   "files": ["src/main.ts"],
   "include": ["src/**/*.d.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@environments/*": ["src/environments/*"],
+      "@components/*": ["src/app/components/*"],
+      "@guards/*": ["src/app/guards/*"],
+      "@services/*": ["src/app/services/*"],
+      "@utils/*": ["src/app/utils/*"],
+      "@shared/*": ["../shared/lib/*"]
+    }
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.spec.json" }
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  }
 }

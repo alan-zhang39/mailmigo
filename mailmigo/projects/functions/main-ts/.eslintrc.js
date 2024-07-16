@@ -23,20 +23,20 @@ module.exports = {
     "/*shared/**/*",
     "**/node_modules/**/*",
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
     "import/no-unresolved": 0,
     "indent": ["error", 2],
     "object-curly-spacing": 0,
     "quotes": 0,
     "require-jsdoc": 0,
-    "max-len": ["error", {
-      "ignoreStrings": true,
-      "ignoreTemplateLiterals": true,
-    }],
+    "max-len": [
+      "error",
+      {
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+      },
+    ],
     "camelcase": "off",
   },
 };
