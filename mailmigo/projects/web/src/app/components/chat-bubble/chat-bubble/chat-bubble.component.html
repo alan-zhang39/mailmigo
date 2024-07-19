@@ -1,0 +1,11 @@
+<!--https://www.penguinui.com/components/chat-bubble-->
+<div class="max-w-[80%] gap-2 p-4 
+   md:max-w-[60%] font-medium"
+     [ngClass]="isResponse ? 'rounded-r-xl rounded-tl-xl bg-slate-200 text-black self-start ml-[1%]' 
+     : 'rounded-l-xl rounded-tr-xl bg-black text-sm text-white self-end mr-[1%]'">
+<!--    <span class="font-semibold">Penguin UI</span>-->
+    <div>
+        {{ message }}
+    </div>
+    <span class="ml-auto text-xs">{{ dateService.timestampToFormattedTime(timestamp) }}</span>
+</div>

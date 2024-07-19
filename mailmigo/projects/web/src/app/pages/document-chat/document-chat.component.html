@@ -1,10 +1,59 @@
-<p>chat messages</p>
-<ul>
-    <li *ngFor="let chatMessage of chatService.getChatMessages()">{{ JSON.stringify(chatMessage) }}</li>
-</ul>
+<style>
+    .no-scroll {
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none; /* Firefox */
+    }
 
-<form (ngSubmit)="chatService.addMessage()" class="flex flex-col mt-5">
-    <label>Enter a message</label>
-    <input type="text" placeholder="Enter a message..." name="message" required [(ngModel)]="chatService.currentMessage">
-    <input type="submit">
-</form>
+    .no-scroll::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+</style>
+<div class="h-screen flex flex-col relative pb-28   ">
+    <div class="sticky top-0 right-0 left-0">
+        <div class="p-toolbar-group-start flex flex-col">
+<!--            <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">-->
+<!--                <li>-->
+<!--                    <a class="text-[#a4a098] no-underline line-height-3 cursor-pointer pi pi-home"></a>-->
+<!--                </li>-->
+<!--                <li class="px-2">-->
+<!--                    <i class="pi pi-angle-right text-500 line-height-3 "></i>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <span class="text-[#a4a098] no-underline line-height-3 cursor-pointer">Document.pdf</span>-->
+<!--                </li>-->
+<!--                <li class="px-2">-->
+<!--                    <i class="pi pi-angle-right line-height-3"></i>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <span class="text-900 line-height-3">Chat</span>-->
+<!--                </li>-->
+<!--            </ul>-->
+            <h1 class="mt-12">Chat With AI</h1>
+        </div>
+    </div>
+    <div #messageContainer  (scroll)="onScroll()" class="overflow-scroll no-scroll flex flex-col-reverse">
+        <div *ngFor="let chatMessage of chatService.chatMessages; let i = index;">
+            <div *ngIf="i === chatService.getChatMessageCount() || 
+        (chatMessage.next !== undefined && !dateService.areTimestampsSameDay(chatMessage.value.timestamp, chatMessage.next.value.timestamp))">
+                <p class="text-slate-500 flex flex-col items-center mt-8"> {{ dateService.timestampToFormattedDateTime(chatMessage.value.timestamp) }}</p>
+            </div>
+            <app-chat-bubble class="flex flex-col w-full gap-4 mt-8" [isResponse]="chatMessage.value.isResponse"
+                             [message]="chatMessage.value.content"
+                             [timestamp]="chatMessage.value.timestamp"></app-chat-bubble>
+        </div>
+    </div>
+    <div class="flex items-end gap-2 mt-8 ml-8 sticky" *ngIf="chatService.aiTyping">
+        <div class="flex gap-1">
+            <span class="size-1.5 rounded-full bg-slate-700 motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-slate-300"></span>
+            <span class="size-1.5 rounded-full bg-slate-700 motion-safe:animate-[bounce_0.5s_ease-in-out_infinite] dark:bg-slate-300"></span>
+            <span class="size-1.5 rounded-full bg-slate-700 motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-slate-300"></span>
+        </div>
+    </div>
+    <form (ngSubmit)="onSubmit()" class="absolute bottom-0 left-0 right-0 flex flex-col items-center m-8">
+        <p-iconField iconPosition="right" class="w-full">
+            <p-inputIcon styleClass="pi pi-send" class="cursor-pointer" (click)="onSubmit()"/>
+            <input name="message" variant="outlined" type="text" pInputText placeholder="Send a message" id="message"
+                   [(ngModel)]="this.currentMessage" class="w-full"/>
+        </p-iconField>
+    </form>
+</div>

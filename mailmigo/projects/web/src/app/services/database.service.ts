@@ -1,6 +1,6 @@
-import { Injectable, Signal, computed } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { inject } from "@angular/core";
+import { Injectable, Signal, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { inject } from '@angular/core';
 import {
   Database,
   TransactionResult,
@@ -13,6 +13,8 @@ import {
   Query,
   push,
   onValue,
+  onChildAdded,
+  onChildChanged
 } from "@angular/fire/database";
 import { runTransaction, Unsubscribe } from '@angular/fire/database';
 import environment from '@environments/environment';
@@ -22,7 +24,7 @@ import { Option } from '@shared/types/rust/option';
 import { DataSnapshot } from '@angular/fire/compat/database/interfaces';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class DatabaseService {
   private database = inject(Database);
@@ -30,7 +32,7 @@ export class DatabaseService {
   constructor () {
     if (environment.type == EnvironmentType.LOCAL) {
       // Point to the RTDB emulator running on localhost.
-      connectDatabaseEmulator(this.database, "127.0.0.1", 9000);
+      connectDatabaseEmulator(this.database, '127.0.0.1', 9000);
     }
   }
 
@@ -70,14 +72,47 @@ export class DatabaseService {
     );
   }
 
-  // Used if want to listen to value.
-  // Note: if pushing using pushWithId(), this will fire twice: once when the empty object is pushed, and once when its id is set.
-  public subscribeToPath (
-    path: string,
+  // Listen for child added. Specify either path string to listen to path, or query if more parameters are needed
+  public subscribeChildAdded<T extends string | Query>(
     callback: (snapshot: DataSnapshot) => void,
+    query: T,
   ): Unsubscribe {
-    const dbRef = ref(this.database, path);
-    return onValue(dbRef, (snapshot) => callback(snapshot));
+    let q;
+    if (typeof query === 'string') {
+      q = ref(this.database, query);
+    }
+    else {
+      q = query;
+    }
+    return onChildAdded(q, (snapshot) => callback(snapshot));
+  }
+
+  public subscribeChildChanged<T extends string | Query>(
+    callback: (snapshot: DataSnapshot) => void,
+    query: T,
+  ): Unsubscribe {
+    let q;
+    if (typeof query === 'string') {
+      q = ref(this.database, query);
+    }
+    else {
+      q = query;
+    }
+    return onChildChanged(q, (snapshot) => callback(snapshot));
+  }
+
+  public subscribeOnValue<T extends string | Query>(
+    callback: (snapshot: DataSnapshot) => void,
+    query: T,
+  ): Unsubscribe {
+    let q;
+    if (typeof query === 'string') {
+      q = ref(this.database, query);
+    }
+    else {
+      q = query;
+    }
+    return onValue(q, (snapshot) => callback(snapshot));
   }
 
   public transact<T extends string | number | boolean | object> (

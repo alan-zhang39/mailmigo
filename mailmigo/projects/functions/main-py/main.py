@@ -100,7 +100,7 @@ def on_new_user_chat(event: db_fn.Event[db_fn.Change]) -> None:
 
     chat_completion_messages = [{"role": "system",
                                  "content": "You are a helpful assistant who answers user questions. "
-                                            "Context will be provided as a comma delimited list of quotation wrapped strings."},
+                                            "Context will be provided as a comma delimited list of quotation wrapped strings. In your answer, do not include or mention anything about the given context. If the context does not make sense, do not mention this to the user. Instead, answer normally without the context."},
                                 {"role": "user",
                                  "content": message["content"] + "\n\nContext: " + formatted_closest_text}]
 
