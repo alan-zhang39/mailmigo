@@ -15,13 +15,13 @@ import { onEmailReceived } from "./routes/gmail";
 import { onSummaryUploadSendReply } from "./triggers/replies";
 
 // Documents
-import { createTranscriptionOnStorageUpload } from "./triggers/documents";
+import { onTaskUploadCreateTranscription } from "./triggers/documents";
 
 // Generations
 import { onTranscriptionUploadGenSummary } from "./triggers/summaries";
 
 // exports.signUpUser = signUpUser;
 exports.onEmailReceived = onEmailReceived;
-exports.createTranscriptionOnStorageUpload = createTranscriptionOnStorageUpload;
+exports.onTaskUploadCreateTranscription = onTaskUploadCreateTranscription;
 exports.onTranscriptionUploadGenSummary = onTranscriptionUploadGenSummary;
 exports.onSummaryUploadSendReply = onSummaryUploadSendReply;

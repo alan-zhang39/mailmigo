@@ -18,14 +18,10 @@ const storage = getStorage();
 const db = getDatabase();
 
 /*
- * Create a transcription entry in the RTDB and
- * storage for any PDF uploaded to storage.
- *
- * Currently doesn't check the actual file path in storage,
- * which means you can upload the pdf anywhere.
- * See https://stackoverflow.com/a/45405350 for details.
+ * Create a transcription entry in the RTDB and storage
+ * when a task is added to the RTDB.
  */
-export const createTranscriptionOnStorageUpload = onValueCreated(
+export const onTaskUploadCreateTranscription = onValueCreated(
   {
     ref: "tasks/{taskId}",
     memory: "2GiB",
@@ -53,7 +49,7 @@ export const createTranscriptionOnStorageUpload = onValueCreated(
         documentId,
         taskId,
         content: transcriptionText,
-        timestamp: Date.now(), // TODO: get actual date
+        timestamp: Date.now(),
       };
 
       // Upload to storage
