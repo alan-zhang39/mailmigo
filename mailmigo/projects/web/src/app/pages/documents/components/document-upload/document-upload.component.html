@@ -1,0 +1,16 @@
+<form (ngSubmit)="onSubmit()" class="flex flex-col">
+  <input
+    type="file"
+    accept=".pdf"
+    id="document-upload"
+    (change)="handleFileChange($event)"
+  />
+
+  <button
+    type="submit"
+    [disabled]="submitted || !document"
+    class="mt-2 w-fit rounded px-2 py-2"
+  >
+    Upload Document
+  </button>
+</form>

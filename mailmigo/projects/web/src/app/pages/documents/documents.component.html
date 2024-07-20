@@ -1,31 +1,35 @@
 <div class="flex w-10/12 flex-col items-center">
+  
+  
+  <app-document-upload class="mt-4 self-start"></app-document-upload>
+
   <table
     class="ml-0 mt-8 w-full table-fixed border-collapse text-left text-base"
   >
     <thead>
       <tr class="[&>*]:font-normal">
-        <th class="text-grey-600 pb-4 pt-4">File</th>
+        <th class="pb-4 pt-4 text-grey-600">File</th>
         <th class="">Uploaded</th>
         <th class="text-center">Chat with Document</th>
         <th class="text-center">Preview Document</th>
         <th class="text-center">Delete</th>
       </tr>
     </thead>
-
     <tbody>
       <tr
-        class="border-grey-100 border-0 border-t-2 border-solid text-sm"
+        class="border-0 border-t-2 border-solid border-grey-100 text-sm"
         *ngFor="let doc of this.documents()"
       >
-        <td class="text-grey-600 pb-4 pt-4">{{ doc.filename }}</td>
+        <td class="pb-4 pt-4 text-grey-600">{{ doc.filename }}</td>
         <td>{{ doc.timestamp }}</td>
-        <td class="text-center">TODO: (+)</td>
         <td class="text-center">
-          <button (click)="previewDocument(doc)">></button>
+          <lucide-icon name="circle-plus" [size]="24" [strokeWidth]="1.5"></lucide-icon>
         </td>
         <td class="text-center">
-          <button>-</button>
-          <!-- <button (click)="this.documentsService.deleteDocument(doc.id)">-</button> -->
+          <lucide-icon name="square-arrow-out-up-right" [size]="22" [strokeWidth]="1.5" (click)="previewDocument(doc)"></lucide-icon>
+        </td>
+        <td class="text-center">
+          <lucide-icon name="circle-minus" [size]="24" [strokeWidth]="1.5" (click)="this.documentsService.deleteDocument(doc.id)"></lucide-icon>
         </td>
       </tr>
       <tr></tr>

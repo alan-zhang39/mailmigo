@@ -132,18 +132,21 @@ export class DatabaseService {
     return set(dbRef, data);
   }
 
-  // Push data to new key at `path`
+  // Push data to new key at `path`.
+  // If successful, the new key will be returned.
   public async push<T extends object> (
     path: string,
     data: T,
-  ) {
+  ): Promise<string | null> {
     const dbRef = ref(this.database, path);
     try {
       const pushed = await push(dbRef);
       const payload = {...data, id: pushed.key};
-      return await set(pushed, payload);
+      await set(pushed, payload);
+      return pushed.key;
     } catch (e) {
-        console.log(e);
+      console.log(e);
+      return null;
     }
   }
 

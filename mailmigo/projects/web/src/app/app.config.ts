@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { routes } from "./app.routes";
 import environment from "@environments/environment";
 import { provideAnimations } from "@angular/platform-browser/animations";
-// import { ToastrModule } from 'ngx-toastr';
+import { LucideAngularModule, CirclePlus, SquareArrowOutUpRight, CircleMinus } from "lucide-angular";
 import { MessageService } from "primeng/api";
 
 // Firebase
@@ -32,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     MessageService,
+    importProvidersFrom(LucideAngularModule.pick({ CirclePlus, SquareArrowOutUpRight, CircleMinus }))
     // importProvidersFrom(ToastrModule.forRoot({
     //   timeOut: 3000,
     //   positionClass: 'toast-top-right',
