@@ -1,24 +1,24 @@
-<div class = 'flex fixed justify-start w-[14.5vw]'>
-  <div class='relative text-wrap  overflow-hidden'>
-      <nav class="left-0 px-0 mx-0 h-screen pt-14 w-[14.5vw] border-r border-t-0 border-b-0 border-l-0 border-2 border-solid border-grey-100">
-          <app-logo class="pb-20"></app-logo>
-          <p-menu [model]="items" styleClass = 'border-none w-[14vw]'>
-              <ng-template pTemplate="item" let-item>
-                  <ng-container *ngIf="item.route; else elseBlock">
-                      <a [routerLink]="item.route" class="p-menuitem-link">
-                          <span [class]="item.icon"></span>
-                          <span class="ml-2">{{ item.label }}</span>
-                      </a>
-                  </ng-container>
-                  <ng-template #elseBlock>
-                      <div class="p-menuitem-link">
-                          <span [class]="item.icon"></span>
-                          <span class="ml-2">{{ item.label }}</span>
-                      </div>
-                  </ng-template>
-              </ng-template>
-          </p-menu>
-      </nav>
+<div class='flex fixed justify-start w-[16vw]'>
+  <div class='relative text-wrap overflow-hidden'>
+    <nav class="left-0 px-0 mx-0 min-h-screen h-full pt-14 w-[16vw] border-r border-t-0 border-b-0 border-l-0 border-2 border-solid border-grey-100">
+      <app-logo class="pb-20"></app-logo>
+      <p-menu [model]="items" styleClass='border-none w-full pl-2'>
+        <ng-template pTemplate="item" let-item>
+          <ng-container *ngIf="item.route; else elseBlock">
+            <a [routerLink]="item.route" class="p-menuitem-link flex items-center py-2 px-4 my-1 hover:bg-gray-200 transition duration-200 ease-in-out">
+              <span [class]="item.icon"></span>
+              <span class="ml-3 text-base">{{ item.label }}</span>
+            </a>
+          </ng-container>
+          <ng-template #elseBlock>
+            <div class="p-menuitem-link flex items-center py-2 px-4 my-1">
+              <span [class]="item.icon"></span>
+              <span class="ml-3 text-base">{{ item.label }}</span>
+            </div>
+          </ng-template>
+        </ng-template>
+      </p-menu>
+    </nav>
   </div>
 </div>
-<div class = 'flex justify-start w-[14.5vw] border-r-2 border-gray-500'></div>
+<div class='flex justify-start w-[16vw] border-r-2 border-gray-500'></div>

@@ -1,6 +1,6 @@
-import { Injectable, Signal, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { inject } from '@angular/core';
+import { Injectable, Signal, computed } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { inject } from "@angular/core";
 import {
   Database,
   TransactionResult,
@@ -14,7 +14,11 @@ import {
   push,
   onValue,
   onChildAdded,
-  onChildChanged
+  onChildChanged,
+  query,
+  orderByChild,
+  limitToLast,
+  startAfter
 } from "@angular/fire/database";
 import { runTransaction, Unsubscribe } from '@angular/fire/database';
 import environment from '@environments/environment';
@@ -24,7 +28,7 @@ import { Option } from '@shared/types/rust/option';
 import { DataSnapshot } from '@angular/fire/compat/database/interfaces';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class DatabaseService {
   private database = inject(Database);
@@ -32,7 +36,7 @@ export class DatabaseService {
   constructor () {
     if (environment.type == EnvironmentType.LOCAL) {
       // Point to the RTDB emulator running on localhost.
-      connectDatabaseEmulator(this.database, '127.0.0.1', 9000);
+      connectDatabaseEmulator(this.database, "127.0.0.1", 9000);
     }
   }
 
@@ -161,4 +165,7 @@ export class DatabaseService {
     const dbRef = ref(this.database, path);
     return remove(dbRef);
   }
+
+
+  
 }

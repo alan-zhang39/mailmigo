@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FilePreviewService } from './file-preview.service';
+import { FileService } from './file.service';
 
 describe('FilePreviewService', () => {
-  let service: FilePreviewService;
+  let service: FileService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FilePreviewService);
+    service = TestBed.inject(FileService);
   });
 
   it('should be created', () => {

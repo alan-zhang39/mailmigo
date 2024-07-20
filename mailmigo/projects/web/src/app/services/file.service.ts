@@ -5,7 +5,7 @@ import { StorageService } from "./storage.service";
 @Injectable({
   providedIn: "root",
 })
-export class FilePreviewService {
+export class FileService {
   current: Option<{
     path: string;
     data: Blob;
@@ -22,6 +22,22 @@ export class FilePreviewService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  async downloadFile(path: string): Promise<void> {
+    try {
+      const blob = await this.storage.getBlob(path);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = path.split('/').pop() || 'download';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
     }
   }
 }

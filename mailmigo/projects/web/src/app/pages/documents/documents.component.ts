@@ -7,7 +7,7 @@ import { DatabaseService } from "@services/database.service";
 import { AuthService } from "@services/auth.service";
 import { NgFor } from "@angular/common";
 import { Router } from "@angular/router";
-import { FilePreviewService } from "@services/file-preview.service";
+import { FileService } from "@services/file.service";
 
 @Component({
   selector: "app-document",
@@ -31,7 +31,7 @@ export class DocumentsComponent {
     db: DatabaseService,
     documentsService: DocumentsService,
     private router: Router,
-    private preview: FilePreviewService,
+    private preview: FileService,
   ) {
     // I'm casting this because it's possible for this.documents to be null (yes, TS isn't saying it).
     // This happens when the uid, and consequently the path, doesn't exist in the RTDB.
