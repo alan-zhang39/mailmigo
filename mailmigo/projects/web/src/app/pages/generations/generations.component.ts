@@ -22,7 +22,7 @@ import { FileService } from "@services/file.service";
 import { Router } from "@angular/router";
 import { StatusPillComponent } from "./components/status-pill/status-pill.component";
 import { PaginatorModule } from "primeng/paginator";
-import {GenerationTypePillComponent} from "./components/generation-type-pill/generation-type-pill.component";
+import { GenerationTypePillComponent } from "./components/generation-type-pill/generation-type-pill.component";
 
 @Component({
   selector: "app-generations",
@@ -37,7 +37,7 @@ import {GenerationTypePillComponent} from "./components/generation-type-pill/gen
     TableModule,
     StatusPillComponent,
     PaginatorModule,
-    GenerationTypePillComponent
+    GenerationTypePillComponent,
   ],
 })
 export class GenerationsComponent implements OnDestroy {
@@ -48,7 +48,7 @@ export class GenerationsComponent implements OnDestroy {
   paginatedRecords: Signal<Task[]>;
   totalRecords: Signal<number>;
   searchTerm: WritableSignal<string>;
-  rows: number = 10; // Number of rows per page
+  rows: number = 8;
   currentPage: number = 0;
   selectedTypes: { label: string; value: string }[] = [];
   dateRange: Date[] = [];
@@ -200,7 +200,7 @@ export class GenerationsComponent implements OnDestroy {
     this.preview.setFile(
       `generations/summary/${record.orgId}/${record.uid}/${record.documentId}.pdf`,
     );
-    this.router.navigate(["/preview"]);
+    this.router.navigate(["/user/preview"]);
   }
 
   ngOnDestroy() {

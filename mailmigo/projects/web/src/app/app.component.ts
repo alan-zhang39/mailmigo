@@ -1,5 +1,5 @@
 import { RouterOutlet } from "@angular/router";
-import { Component, inject } from "@angular/core";
+import { Component } from "@angular/core";
 import { ToastModule } from "primeng/toast";
 
 @Component({

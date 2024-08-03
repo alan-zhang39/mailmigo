@@ -1,63 +1,44 @@
-<div *ngIf="!editing && config().isSome()">
-  <div class="mt-6">
-    <label class="mt-10 font-medium" for="org">LLM</label>
-    <input
-      disabled
-      id="llm"
-      class="border-grey-500 mt-1.5 block h-8 rounded-md border bg-white pl-[8px] text-sm"
-      name="llm"
-      [value]="config().unwrap().llm"
-    />
-  </div>
-  <div class="mt-6">
-    <label class="mt-10 font-medium" for="org">Prompt</label>
-    <textarea
-      [disabled]="true"
-      id="prompt"
-      class="border-grey-500 mt-1.5 block h-8 w-[80%] rounded-md border bg-white pl-[8px] text-sm"
-      name="prompt"
-      [value]="config().unwrap().prompt"
-    ></textarea>
-  </div>
+<div class="mb-4 flex justify-end">
+  <button
+    pButton
+    icon="pi pi-pencil"
+    label="Edit Configuration"
+    (click)="showEditDialog()"
+    class="mt-4 self-start"
+  ></button>
 </div>
-<form [formGroup]="form()" *ngIf="editing && config().isSome()">
-  <div class="mt-6">
-    <label class="mt-10 font-medium" for="org">LLM</label>
-    <select formControlName="llm">
-      <option *ngFor="let llm of llms" [ngValue]="llm">
-        {{ llm }}
-      </option>
-    </select>
-  </div>
-  <div class="mt-6">
-    <label class="mt-10 font-medium" for="org">Prompt</label>
-    <textarea
-      id="prompt"
-      class="border-grey-500 mt-1.5 block h-8 rounded-md border bg-white pl-[8px] text-sm"
-      name="userOrg"
-      formControlName="prompt"
-    ></textarea>
-  </div>
-</form>
 
-<button
-  (click)="startEditing()"
-  *ngIf="!editing"
-  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
->
-  Edit
-</button>
-<button
-  (click)="submit()"
-  *ngIf="editing"
-  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
->
-  Save
-</button>
-<button
-  (click)="cancel()"
-  *ngIf="editing"
-  class="mr-5 rounded-full border border-black bg-white px-5 py-2"
->
-  Cancel
-</button>
+<section class="mt-8 w-full">
+  <div class="container mx-auto rounded-md bg-white p-4 shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-bold">Current Configuration</h2>
+    </div>
+
+    <div *ngIf="config() != undefined" class="space-y-4">
+      <div class="field">
+        <label class="block font-medium text-gray-700" for="llm">LLM</label>
+        <input
+          pInputText
+          disabled
+          id="llm"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          [value]="config()!.llm"
+        />
+      </div>
+      <div class="field">
+        <label class="block font-medium text-gray-700" for="prompt"
+          >Prompt</label
+        >
+        <textarea
+          pInputTextarea
+          disabled
+          id="prompt"
+          rows="5"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          [value]="config()!.prompt"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <p-toast></p-toast>
+</section>

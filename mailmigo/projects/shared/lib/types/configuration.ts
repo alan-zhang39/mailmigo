@@ -1,9 +1,17 @@
+export enum ConfigurationType {
+  USER = "user",
+  ORGANIZATION = "org",
+  SYSTEM = "system",
+}
+
 export enum LLMType {
-  OPENAI = "openai",
-  BEDROCK = "bedrock",
+  OPENAI = "OpenAI",
+  BEDROCK = "AWS Bedrock",
 }
 
 export interface Configuration {
+  type: ConfigurationType;
   llm: LLMType;
   prompt: string;
+  required?: boolean;
 }

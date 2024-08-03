@@ -18,30 +18,39 @@ import {
   query,
   orderByChild,
   limitToLast,
-  startAfter
+  startAfter,
 } from "@angular/fire/database";
-import { runTransaction, Unsubscribe } from '@angular/fire/database';
-import environment from '@environments/environment';
-import { EnvironmentType } from '@environments/types';
-import { Option } from '@shared/types/rust/option';
+import { runTransaction, Unsubscribe } from "@angular/fire/database";
+import environment from "@environments/environment";
+import { EnvironmentType } from "@environments/types";
+import { Option } from "@shared/types/rust/option";
 // @ts-ignore
-import { DataSnapshot } from '@angular/fire/compat/database/interfaces';
+import { DataSnapshot } from "@angular/fire/compat/database/interfaces";
+import { Observable, skip, take } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class DatabaseService {
-  private database = inject(Database);
+  public database = inject(Database);
 
-  constructor () {
+  constructor() {
     if (environment.type == EnvironmentType.LOCAL) {
       // Point to the RTDB emulator running on localhost.
       connectDatabaseEmulator(this.database, "127.0.0.1", 9000);
     }
   }
 
+  public get<T extends string | number | boolean | object>(path: string) {
+    const dbRef = ref(this.database, path);
+    const obs$ = objectVal<T>(dbRef);
+    return new Promise<T>((res, rej) => {
+      obs$.pipe(take(1)).subscribe({ next: res, error: rej });
+    });
+  }
+
   // Used if want to handle undefined case while fetching.
-  public observe<T extends string | number | boolean | object> (
+  public observe<T extends string | number | boolean | object>(
     path: string,
   ): Signal<Option<T>> {
     const dbRef = ref(this.database, path);
@@ -52,8 +61,25 @@ export class DatabaseService {
     );
   }
 
+  public observable<T extends string | number | boolean | object>(
+    path: string,
+  ): Observable<T | null> {
+    const dbRef = ref(this.database, path);
+    const obs$ = objectVal<T | null>(dbRef);
+    return obs$;
+  }
+
+  public observableToSignal<T extends string | number | boolean | object>(
+    obs: Observable<T | null | undefined>,
+  ): Signal<Option<T>> {
+    const signal = toSignal<T | null | undefined>(obs);
+    return computed(() =>
+      signal() !== undefined ? Option.Some(signal() as T) : Option.None(),
+    );
+  }
+
   // Used if want to handle given initial value while fetching.
-  public observeWithInitial<T extends string | number | boolean | object> (
+  public observeWithInitial<T extends string | number | boolean | object>(
     path: string,
     initialValue: T,
   ): Signal<T> {
@@ -82,10 +108,9 @@ export class DatabaseService {
     query: T,
   ): Unsubscribe {
     let q;
-    if (typeof query === 'string') {
+    if (typeof query === "string") {
       q = ref(this.database, query);
-    }
-    else {
+    } else {
       q = query;
     }
     return onChildAdded(q, (snapshot) => callback(snapshot));
@@ -96,10 +121,9 @@ export class DatabaseService {
     query: T,
   ): Unsubscribe {
     let q;
-    if (typeof query === 'string') {
+    if (typeof query === "string") {
       q = ref(this.database, query);
-    }
-    else {
+    } else {
       q = query;
     }
     return onChildChanged(q, (snapshot) => callback(snapshot));
@@ -110,16 +134,15 @@ export class DatabaseService {
     query: T,
   ): Unsubscribe {
     let q;
-    if (typeof query === 'string') {
+    if (typeof query === "string") {
       q = ref(this.database, query);
-    }
-    else {
+    } else {
       q = query;
     }
     return onValue(q, (snapshot) => callback(snapshot));
   }
 
-  public transact<T extends string | number | boolean | object> (
+  public transact<T extends string | number | boolean | object>(
     path: string,
     transaction: (currentData: T) => T,
   ): Promise<TransactionResult> {
@@ -138,14 +161,14 @@ export class DatabaseService {
 
   // Push data to new key at `path`.
   // If successful, the new key will be returned.
-  public async push<T extends object> (
+  public async push<T extends object>(
     path: string,
     data: T,
   ): Promise<string | null> {
     const dbRef = ref(this.database, path);
     try {
       const pushed = await push(dbRef);
-      const payload = {...data, id: pushed.key};
+      const payload = { ...data, id: pushed.key };
       await set(pushed, payload);
       return pushed.key;
     } catch (e) {
@@ -165,7 +188,4 @@ export class DatabaseService {
     const dbRef = ref(this.database, path);
     return remove(dbRef);
   }
-
-
-  
 }

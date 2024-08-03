@@ -36,7 +36,12 @@ export const onEmailReceived = onRequest(async (req, res) => {
         (attachment) =>
           attachment.data !== null && attachment.data !== undefined,
       )
-      .map((attachment) => Buffer.from(attachment.data!, "base64url"));
+      .map((attachment) => {
+        return {
+          name: attachment.name,
+          buffer: Buffer.from(attachment.data!, "base64url"),
+        };
+      });
 
     const bucket = storage.bucket();
 
@@ -53,13 +58,13 @@ export const onEmailReceived = onRequest(async (req, res) => {
         const path = `documents/${orgId}/${author.uid}`;
         const ref = db.ref(path).push();
         if (!ref.key) throw Error("Failed to create doc ref");
-        await bucket.file(`${path}/${ref.key}.pdf`).save(decoded);
+        await bucket.file(`${path}/${ref.key}.pdf`).save(decoded.buffer);
         const doc: Document = {
           id: ref.key,
           uid: author.uid,
           orgId,
           timestamp: Date.now(),
-          filename: ref.key, // change to actual filename
+          filename: decoded.name, // change to actual filename
         };
         ref.set(doc);
 
@@ -72,6 +77,7 @@ export const onEmailReceived = onRequest(async (req, res) => {
           type: GenerationType.SUMMARY,
           status: TaskStatus.UPLOADING,
           documentId: ref.key,
+          documentName: decoded.name,
           uid: author.uid,
           orgId,
           origin: {

@@ -17,6 +17,7 @@
     "dependencies": {
         "buffer": "^6.0.3",
         "eslint": "^9.6.0",
+        "lucide-angular": "^0.412.0",
         "primeng": "^17.18.4"
     }
 }

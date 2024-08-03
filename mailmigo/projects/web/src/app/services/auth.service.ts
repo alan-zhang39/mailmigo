@@ -1,4 +1,12 @@
-import { Injectable, OnDestroy, OnInit, Signal, inject } from "@angular/core";
+import {
+  Injectable,
+  OnDestroy,
+  OnInit,
+  Signal,
+  computed,
+  inject,
+  signal,
+} from "@angular/core";
 import {
   Auth,
   GoogleAuthProvider,
@@ -15,6 +23,7 @@ import {
   Unsubscribe,
   NextOrObserver,
   UserInfo,
+  signOut,
 } from "@angular/fire/auth";
 
 import environment from "@environments/environment";
@@ -22,7 +31,15 @@ import { EnvironmentType } from "@environments/types";
 import { Functions, connectFunctionsEmulator } from "@angular/fire/functions";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { DatabaseService } from "./database.service";
-import { Observable } from "rxjs";
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  map,
+  switchMap,
+} from "rxjs";
+import { Router } from "@angular/router";
+import { Organization } from "../pages/organization/organization.component";
 
 @Injectable({
   providedIn: "root",
@@ -31,9 +48,14 @@ export class AuthService implements OnDestroy {
   private user_sub: Unsubscribe;
   public user: Signal<User | null | undefined>;
   public user$: Observable<User | null | undefined>;
+  public org$: BehaviorSubject<Organization | null | undefined> =
+    new BehaviorSubject<Organization | null | undefined>(undefined);
+  public orgSub: Subscription | null = null;
+  public isAdmin: boolean = false;
 
   constructor(
     private auth: Auth,
+    private router: Router,
     private db: DatabaseService,
     functions: Functions,
   ) {
@@ -47,12 +69,35 @@ export class AuthService implements OnDestroy {
     this.user$ = user(auth);
     this.user_sub = onAuthStateChanged(
       auth,
-      this.updateUserData as NextOrObserver<User>,
+      this.onAuthChange as NextOrObserver<User | null>,
     );
-    console.log(this.user);
   }
 
-  updateUserData = (user: User) => {
+  onAuthChange = (user: User | null) => {
+    this.updateUserData(user);
+    console.log("auth changed", user);
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+      this.orgSub = null;
+    }
+    if (user)
+      this.orgSub = this.db
+        .observable<string>(`auth/user_orgs/${user.uid}`)
+        .pipe(
+          switchMap((orgId) =>
+            this.db.observable<Organization>(`auth/organizations/${orgId}`),
+          ),
+        )
+        .subscribe((org) => {
+          this.org$.next(org);
+          if (!org) this.isAdmin = false;
+          else this.isAdmin = org.members[user.uid];
+          console.log(`admin: ${this.isAdmin}`);
+        });
+  };
+
+  updateUserData = (user: User | null) => {
+    if (user === null) return;
     console.log("Data changed");
     const userInfo: UserInfo = {
       displayName: user.displayName,
@@ -117,6 +162,16 @@ export class AuthService implements OnDestroy {
       return { code: 1, message: "Error signing in" };
     }
     return { code: 0, message: "Signed in" };
+  }
+
+  async logout() {
+    try {
+      await signOut(this.auth);
+      this.router.navigateByUrl("/sign-in");
+    } catch (e) {
+      console.log(e);
+      console.log("Logout failed");
+    }
   }
 
   public async changeCurrentUserPass(newPassword: string) {

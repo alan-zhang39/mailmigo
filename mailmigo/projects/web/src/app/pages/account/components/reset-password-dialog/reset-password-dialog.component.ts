@@ -2,11 +2,13 @@ import { Component } from "@angular/core";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { AuthService } from "@services/auth.service";
+import { InputTextModule } from "primeng/inputtext";
+import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-reset-password-dialog",
   standalone: true,
-  imports: [ConfirmPopupModule],
+  imports: [ConfirmPopupModule, InputTextModule, ButtonModule],
   templateUrl: "./reset-password-dialog.component.html",
   providers: [ConfirmationService],
   styles: ``,

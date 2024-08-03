@@ -5,12 +5,16 @@ import {
 } from "@angular/core";
 import { provideRouter } from "@angular/router";
 import { provideHttpClient } from "@angular/common/http";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { routes } from "./app.routes";
 import environment from "@environments/environment";
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { LucideAngularModule, CirclePlus, SquareArrowOutUpRight, CircleMinus } from "lucide-angular";
+import {
+  LucideAngularModule,
+  CirclePlus,
+  SquareArrowOutUpRight,
+  CircleMinus,
+} from "lucide-angular";
 import { MessageService } from "primeng/api";
 
 // Firebase
@@ -19,6 +23,7 @@ import { getDatabase, provideDatabase } from "@angular/fire/database";
 import { provideStorage, getStorage } from "@angular/fire/storage";
 import { provideAuth, getAuth } from "@angular/fire/auth";
 import { provideFunctions, getFunctions } from "@angular/fire/functions";
+import { AuthGuard } from "@guards/auth.guard";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,11 +37,20 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     MessageService,
-    importProvidersFrom(LucideAngularModule.pick({ CirclePlus, SquareArrowOutUpRight, CircleMinus }))
-    // importProvidersFrom(ToastrModule.forRoot({
+    AuthGuard,
+    importProvidersFrom(
+      LucideAngularModule.pick({
+        CirclePlus,
+        SquareArrowOutUpRight,
+        CircleMinus,
+      }),
+    ),
+    // importProvidersFrom(
+    // ToastModule.forRoot({
     //   timeOut: 3000,
-    //   positionClass: 'toast-top-right',
+    //   positionClass: "toast-top-right",
     //   preventDuplicates: true,
-    // }))
+    // }),
+    // ),
   ],
 };
