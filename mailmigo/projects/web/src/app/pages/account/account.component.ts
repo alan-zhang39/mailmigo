@@ -15,6 +15,10 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { DatabaseService } from "../../services/database.service";
 import { User } from "@angular/fire/auth";
 import { Option } from "@shared/types/rust/option";
+import { Organization } from "../organization/organization.component";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { InputTextModule } from "primeng/inputtext";
+import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-account",
@@ -29,6 +33,8 @@ import { Option } from "@shared/types/rust/option";
     NgIf,
     ProgressSpinnerModule,
     ToastModule,
+    InputTextModule,
+    ButtonModule
   ],
   templateUrl: "./account.component.html",
   providers: [DialogService],
@@ -38,6 +44,7 @@ export class AccountComponent implements OnDestroy {
   headerTitle: string = "Account";
   ref: DynamicDialogRef | undefined;
   user: Signal<Option<User>>;
+  org: Signal<Option<Organization>> = signal(Option.None());
 
   constructor(
     public auth: AuthService,
@@ -49,6 +56,8 @@ export class AccountComponent implements OnDestroy {
     this.user = auth.user()
       ? this.db.observe(`auth/users/${auth.user()!.uid}`)
       : signal(Option.None());
+
+    this.org = this.db.observableToSignal<Organization>(this.auth.org$);
   }
 
   private showSuccess(message: string) {

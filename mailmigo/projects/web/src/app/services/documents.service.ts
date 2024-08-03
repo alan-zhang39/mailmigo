@@ -15,7 +15,7 @@ export class DocumentsService {
   constructor(
     private auth: AuthService,
     private db: DatabaseService,
-    private storage: StorageService
+    private storage: StorageService,
   ) {
     this.uid = this.auth.user()?.uid;
   }
@@ -49,7 +49,10 @@ export class DocumentsService {
     }
 
     // Upload document contents to storage.
-    await this.storage.uploadBytes(`documents/${this.orgId}/${this.uid}/${documentId}.pdf`, buffer);
+    await this.storage.uploadBytes(
+      `documents/${this.orgId}/${this.uid}/${documentId}.pdf`,
+      buffer,
+    );
 
     // Upload task to RTDB. We do this last, because this upload triggers Firebase functions
     // (which need everything else to be done already).
@@ -59,6 +62,7 @@ export class DocumentsService {
       type: GenerationType.SUMMARY,
       status: TaskStatus.UPLOADING,
       documentId: documentId,
+      documentName: filename,
       uid: this.uid,
       orgId: this.orgId,
       timestamp: Date.now(),
@@ -68,10 +72,12 @@ export class DocumentsService {
 
   // Delete the RTDB and storage entry for the current document.
   // TODO: note - this is not ideal, since I'm not deleting the associated Task.
-  deleteDocument = (documentId: string) => {
+  deleteDocument = async (documentId: string) => {
     console.log("deleteDocument called with id:", documentId);
 
-    this.db.remove(`${this.orgId}/${this.uid}/${documentId}`);
-    this.storage.deleteObject(`${this.orgId}/${this.uid}/${documentId}.pdf`);
+    await this.db.remove(`${this.orgId}/${this.uid}/${documentId}`);
+    await this.storage.deleteObject(
+      `${this.orgId}/${this.uid}/${documentId}.pdf`,
+    );
   };
 }

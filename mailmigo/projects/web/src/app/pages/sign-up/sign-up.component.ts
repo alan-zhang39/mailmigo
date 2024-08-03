@@ -7,6 +7,8 @@ import { LogoComponent } from "@components/logo/logo.component";
 import { Router } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { InputTextModule } from "primeng/inputtext";
+import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-login",
@@ -17,6 +19,8 @@ import { ToastModule } from "primeng/toast";
     ProgressSpinnerModule,
     LogoComponent,
     ToastModule,
+    InputTextModule,
+    ButtonModule
   ],
   templateUrl: "./sign-up.component.html",
   styles: ``,
@@ -62,7 +66,7 @@ export class SignUpComponent {
         this.showError(this.message);
       } else {
         this.showSuccess(this.message);
-        this.router.navigate(["account"]);
+        this.router.navigate(["/user/account"]);
       }
       console.log(this.message);
     } else if (
@@ -83,7 +87,7 @@ export class SignUpComponent {
         this.showError(this.message);
       } else {
         this.showSuccess(this.message);
-        this.router.navigate([""]);
+        this.router.navigate(["/user/dashboard"]);
       }
     });
   };

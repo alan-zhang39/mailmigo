@@ -7,6 +7,8 @@ import { LogoComponent } from "@components/logo/logo.component";
 import { Router } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { InputTextModule } from "primeng/inputtext";
+import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-sign-in",
@@ -17,6 +19,8 @@ import { ToastModule } from "primeng/toast";
     ProgressSpinnerModule,
     LogoComponent,
     ToastModule,
+    InputTextModule,
+    ButtonModule
   ],
   templateUrl: "./sign-in.component.html",
   styles: ``,
@@ -54,7 +58,7 @@ export class SignInComponent {
         this.showError(this.message);
       } else {
         this.showSuccess(this.message);
-        this.router.navigate(["account"]);
+        this.router.navigate(["/user/account"]);
       }
       console.log(this.message);
     } else if (userEmail === null && userPassword === null) {
@@ -71,7 +75,7 @@ export class SignInComponent {
         this.showError(this.message);
       } else {
         this.showSuccess(this.message);
-        this.router.navigate([""]);
+        this.router.navigate(["/user/dashboard"]);
       }
     });
   };

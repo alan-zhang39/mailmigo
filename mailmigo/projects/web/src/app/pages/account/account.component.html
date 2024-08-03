@@ -1,22 +1,19 @@
 <div class="w-[34vw]">
   <div class="mt-8">
-    <div class="mt-10">
-      <!-- <p-avatar styleClass="float-left" size="xlarge" shape="circle" *ngIf="(this.user().isNone()); else iconTemplate" icon="pi pi-user"></p-avatar> -->
-      <!-- <ng-template #iconTemplate > -->
+    <div class="flex items-center mt-10">
       <p-avatar
         styleClass="float-left"
         size="xlarge"
         shape="circle"
-        [icon]="this.user().isNone() ? undefined : 'pi pi-user'"
-        [image]="!this.user().isNone() ? user().unwrap().photoURL ?? '' : ''"
+        [icon]="user().isNone() ? 'pi pi-user' : undefined"
+        [image]="!user().isNone() ? user().unwrap().photoURL ?? '' : ''"
       ></p-avatar>
-      <!-- </ng-template> -->
-      <div class="ml-[6vw]">
+      <div class="ml-6">
         <p class="mb-0 pt-1.5 font-medium">
           {{
-            this.user().isNone()
+            user().isNone()
               ? "loading..."
-              : this.user().unwrap().displayName
+              : user().unwrap().displayName
           }}
         </p>
         <p class="mt-1 text-sm font-light text-gray-400">
@@ -28,35 +25,38 @@
   <div class="mt-10">
     <label class="mt-10 font-medium" for="email">Email</label>
     <input
-      #userEmail
+      pInputText
       disabled
       id="email"
-      class="border-grey-500 mt-1.5 h-8 w-full rounded-md border bg-white pl-[8px] text-sm"
-      name="userEmail"
-      [value]="this.user().isNone() ? 'loading...' : this.user().unwrap().email"
+      class="mt-1.5 w-full"
+      [value]="user().isNone() ? 'loading...' : user().unwrap().email"
     />
   </div>
   <div class="mt-6">
     <label class="mt-10 font-medium" for="org">Organization</label>
     <input
-      #userOrg
+      pInputText
       disabled
       id="org"
-      class="border-grey-500 mt-1.5 h-8 w-full rounded-md border bg-white pl-[8px] text-sm"
-      name="userOrg"
-      [value]="'None'"
+      class="mt-1.5 w-full"
+      [value]="
+        org().isNone()
+          ? 'Loading'
+          : org().unwrap() == null
+            ? 'None'
+            : org().unwrap().name
+      "
     />
   </div>
   <button
-    #resetPass
+    pButton
     (click)="showResetDialog()"
     type="button"
-    class="border-grey-500 mt-6 h-10 w-[29%] rounded-md border bg-black text-sm font-semibold text-white shadow-md"
-  >
-    Reset Password
-  </button>
+    label="Reset Password"
+    class="mt-6 w-1/3 bg-black text-white"
+  ></button>
 </div>
 
-<div *ngIf="this.user == null" class="flex h-full w-full place-content-center">
-  <p-progressSpinner ariaLabel="loading" />
+<div *ngIf="user == null" class="flex h-full w-full place-content-center">
+  <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
 </div>

@@ -20,7 +20,7 @@ export class LayoutComponent implements OnInit {
   headerTitle: string = "";
 
   routeTitles: { [key: string]: string } = {
-    "": "Dashboard",
+    dashboard: "Dashboard",
     account: "Account",
     organization: "Organization",
     configurations: "Configurations",

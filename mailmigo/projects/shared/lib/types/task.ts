@@ -13,6 +13,7 @@ export interface Task {
   type: GenerationType;
   status: TaskStatus;
   documentId: string;
+  documentName: string;
   uid: string;
   orgId: string;
   origin?: {

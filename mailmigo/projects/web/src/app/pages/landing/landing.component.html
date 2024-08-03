@@ -1,0 +1,32 @@
+<p-menubar class="bg-white shadow-md">
+  <ng-template pTemplate="start">
+    <a [routerLink]="'/'" class="text-xl font-bold no-underline">MailMigo</a>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <button
+      pButton
+      label="Sign In"
+      icon="pi pi-sign-in"
+      class="p-button-outlined"
+      routerLink="/sign-in"
+    ></button>
+  </ng-template>
+</p-menubar>
+
+<div class="mt-[20vh] bg-gray-100 py-16 text-center">
+  <div class="mx-auto max-w-2xl">
+    <h1 class="mb-4 text-4xl font-bold text-gray-900">Welcome to MailMigo</h1>
+    <p class="mb-6 text-lg text-gray-600">
+      Harness the power of AI directly from your email interface. Send or
+      forward emails to MailMigo addresses to process email content and receive
+      smart responses.
+    </p>
+    <button
+      pButton
+      label="Get Started"
+      icon="pi pi-arrow-right"
+      class="p-button-raised p-button-primary"
+      routerLink="/sign-in"
+    ></button>
+  </div>
+</div>

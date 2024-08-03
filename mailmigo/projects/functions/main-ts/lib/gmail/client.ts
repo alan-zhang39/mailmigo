@@ -75,14 +75,19 @@ export class GmailClient {
       throw Error("No payload parts");
     }
 
-    const attachmentIds: string[] = message.payload.parts
+    const attachmentIds = message.payload.parts
       .filter((part) => part.mimeType === "application/pdf")
-      .map((part) => part.body!.attachmentId!)
-      .filter((id) => id !== null && id !== undefined);
+      .map((part) => {
+        return {
+          name: part.filename ?? `${Date.now()}.pdf`,
+          id: part.body!.attachmentId!,
+        };
+      })
+      .filter(({ id }) => id !== null && id !== undefined);
     try {
-      const attachmentPromises = attachmentIds.map((id: string) => {
+      const attachmentPromises = attachmentIds.map(({ name, id }) => {
         if (!message.id) throw Error("Invalid ID");
-        return this.getAttachmentById(message.id, id);
+        return this.getAttachmentById(message.id, name, id);
       });
       return Promise.all(attachmentPromises);
     } catch (e) {
@@ -93,14 +98,18 @@ export class GmailClient {
     }
   }
 
-  private async getAttachmentById(messageId: string, attachmentId: string) {
+  private async getAttachmentById(
+    messageId: string,
+    name: string,
+    attachmentId: string,
+  ) {
     try {
       const attachment = await this.gmail.users.messages.attachments.get({
         userId: "me",
         messageId,
         id: attachmentId,
       });
-      return attachment.data;
+      return { name, data: attachment.data.data };
     } catch (e) {
       const errorMsg = `Failed to get attachment with: messageId: ${messageId}, attachmentId: ${attachmentId}`;
       logger.error(errorMsg);

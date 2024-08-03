@@ -26,4 +26,9 @@ export class ConfigurationsService {
     if (!this.auth.user()) return;
     this.db.set(`configs/users/${this.auth.user()?.uid}`, config);
   }
+
+  setOrgConfig(config: Configuration, org: string) {
+    if (!this.auth.user()) return;
+    this.db.set(`configs/orgs/${org}`, config);
+  }
 }

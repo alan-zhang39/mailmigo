@@ -6,28 +6,30 @@
     <form action="/login" method="POST">
       <input
         #userEmail
+        pInputText
         required
         type="email"
-        class="border-grey-500 mt-4 h-8 w-full rounded-md border pl-[8px] placeholder:text-slate-400"
+        class="mt-4 h-8 w-full rounded-md border pl-2 placeholder:text-slate-400"
         name="userEmail"
         placeholder="email@domain.com"
       />
       <input
         #userPass
+        pInputText
         required
         type="password"
-        class="border-grey-500 mt-4 h-8 w-full rounded-md border pl-[8px] placeholder:text-slate-400"
+        class="mt-4 h-8 w-full rounded-md border pl-2 placeholder:text-slate-400"
         name="userPass"
         placeholder="Password"
       />
       <button
+        pButton
         #submitForEmail
         type="button"
         (click)="loginWithEmail(userEmail.value, userPass.value)"
-        class="border-grey-500 mt-4 h-8 w-full rounded-md border bg-black text-sm font-semibold text-white shadow-md"
-      >
-        Sign in
-      </button>
+        label="Sign in"
+        class="mt-4 w-full bg-black text-white text-sm font-semibold"
+      ></button>
     </form>
     <div class="mt-5 flex items-center">
       <div class="flex-grow border-t border-gray-300"></div>
@@ -37,7 +39,7 @@
     <button
       #submitForGoogle
       (click)="loginWithGoogle()"
-      class="mt-4 block h-7 w-full rounded-md border border-zinc-100 bg-zinc-100 px-4 pb-8 pt-1 shadow-md hover:border-zinc-200 hover:bg-zinc-200"
+      class="mt-4 block h-7 w-full rounded-md border border-zinc-100 bg-zinc-100 px-4 pb-8 pt-1 shadow-md hover:border-zinc-200 hover:bg-zinc-200 cursor-pointer"
     >
       <img
         src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -51,9 +53,13 @@
       <a href="#" class="text-black">Terms of Service</a> and
       <a href="#" class="text-black">Privacy Policy</a>
     </p>
+    <p class="mt-5 items-center text-sm text-gray-400">
+      Don't have a MailMigo account yet?<br />
+      <a [routerLink]="'/sign-up'" class="text-black">Create one now</a>
+    </p>
   </div>
 
   <div *ngIf="isSubmitting">
-    <p-progressSpinner ariaLabel="loading" />
+    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
   </div>
 </div>
