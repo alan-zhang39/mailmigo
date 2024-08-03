@@ -20,6 +20,7 @@
     { "path": "./tsconfig.spec.json" }
   ],
   "angularCompilerOptions": {
-    "strictTemplates": true
+    "strictTemplates": true,
+    "preserveSymlinks": true
   }
 }
