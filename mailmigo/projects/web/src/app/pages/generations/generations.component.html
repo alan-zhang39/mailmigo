@@ -1,0 +1,76 @@
+<section class="mt-8 w-full">
+  <div class="container mx-auto rounded-md bg-white p-4 shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-bold">My Generations</h2>
+      <div class="flex space-x-4">
+        <button
+          pButton
+          pRipple
+          class="font-normal"
+          (click)="filtersApplied ? resetFilters() : showFilterDialog()"
+          icon="pi pi-filter"
+          [label]="filtersApplied ? 'Reset Filter' : 'Add Filter'"
+        ></button>
+        <input
+          type="text"
+          placeholder="Search by title"
+          class="p-inputtext p-component"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+    <p-table class="w-full" [value]="paginatedRecords()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Generation Type</th>
+          <th>Document</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th class="text-center">Download</th>
+          <th class="text-center">Open</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
+        <tr>
+          <td>
+            <generation-type-pill [type]="record.type"></generation-type-pill>
+          </td>
+          <td>{{ record.documentName }}</td>
+          <td>
+            <generations-status-pill
+              [status]="record.status"
+            ></generations-status-pill>
+          </td>
+          <td *ngIf="record.timestamp">
+            {{ record.timestamp | date: "short" }}
+          </td>
+          <td *ngIf="!record.timestamp">N/A</td>
+          <td class="text-center">
+            <button
+              pButton
+              icon="pi pi-download"
+              (click)="download(record)"
+              class="p-button-rounded m-auto"
+              [disabled]="record.status !== 'complete'"
+            ></button>
+          </td>
+          <td class="text-center">
+            <button
+              pButton
+              icon="pi pi-file"
+              (click)="open(record)"
+              class="p-button-rounded"
+              [disabled]="record.status !== 'complete'"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator
+      [rows]="rows"
+      [totalRecords]="totalRecords()"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
+  </div>
+  <p-toast></p-toast>
+</section>

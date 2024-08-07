@@ -1,0 +1,29 @@
+<div class="fixed flex w-[15rem] justify-start">
+  <div class="relative overflow-hidden text-wrap">
+    <nav
+      class="left-0 mx-0 h-full min-h-screen w-[15rem] border-2 border-b-0 border-l-0 border-r border-t-0 border-solid border-grey-100 px-0 pt-14"
+    >
+      <app-logo class="pb-20"></app-logo>
+      <p-menu [model]="items" styleClass="border-none w-full pl-2">
+        <ng-template pTemplate="item" let-item>
+          <ng-container *ngIf="item.route; else elseBlock">
+            <a
+              [routerLink]="item.route"
+              class="p-menuitem-link my-1 flex items-center px-4 py-2 transition duration-200 ease-in-out hover:bg-gray-200"
+            >
+              <span [class]="item.icon"></span>
+              <span class="ml-3 text-base">{{ item.label }}</span>
+            </a>
+          </ng-container>
+          <ng-template #elseBlock>
+            <div class="p-menuitem-link my-1 flex items-center px-4 py-2">
+              <span [class]="item.icon"></span>
+              <span class="ml-3 text-base">{{ item.label }}</span>
+            </div>
+          </ng-template>
+        </ng-template>
+      </p-menu>
+    </nav>
+  </div>
+</div>
+<div class="flex w-[15rem] justify-start border-r-2 border-gray-500"></div>

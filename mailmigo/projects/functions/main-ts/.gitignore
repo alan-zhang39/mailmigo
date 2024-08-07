@@ -13,4 +13,8 @@ node_modules/
 
 credential.json
 .env.*
+.env
 !.env.sample
+
+# Cache
+.cache/

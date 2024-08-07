@@ -1,100 +1,99 @@
 {
-    "functions": [{
-            "source": "projects/functions/main-ts",
-            "codebase": "main-ts",
-            "ignore": [
-                "node_modules",
-                ".git",
-                "firebase-debug.log",
-                "firebase-debug.*.log",
-                "*.local"
-            ],
-            "predeploy": [
-                "npm --prefix \"$RESOURCE_DIR\" run sync-shared",
-                "npm --prefix \"$RESOURCE_DIR\" run lint",
-                "npm --prefix \"$RESOURCE_DIR\" run build"
-            ]
-        },
+  "functions": [
+    {
+      "source": "projects/functions/main-ts",
+      "codebase": "main-ts",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local",
+        ".cache"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run sync-shared",
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "projects/functions/main-py",
+      "codebase": "main-py",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local",
+        ".cache"
+      ]
+    }
+  ],
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "hosting": [
+    {
+      "target": "local",
+      "predeploy": "npm run build",
+      "public": "dist/web/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
         {
-            "source": "projects/functions/main-py",
-            "codebase": "main-py",
-            "ignore": [
-                "venv",
-                ".git",
-                "firebase-debug.log",
-                "firebase-debug.*.log",
-                "*.local"
-            ]
+          "source": "**",
+          "destination": "/index.html"
         }
-    ],
+      ]
+    },
+    {
+      "target": "dev",
+      "predeploy": "npm run build:dev",
+      "public": "dist/web/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "prod",
+      "predeploy": "npm run build:prod",
+      "public": "dist/web/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
     "database": {
-        "rules": "database.rules.json"
+      "port": 9000
+    },
+    "hosting": {
+      "port": 4201
     },
     "storage": {
-        "rules": "storage.rules"
+      "port": 9199,
+      "rules": "storage.rules"
     },
-    "hosting": [{
-            "target": "local",
-            "predeploy": "npm run build",
-            "public": "dist/out-tsc/web/browser",
-            "ignore": [
-                "firebase.json",
-                "**/.*",
-                "**/node_modules/**"
-            ],
-            "rewrites": [{
-                "source": "**",
-                "destination": "/index.html"
-            }]
-        },
-        {
-            "target": "dev",
-            "predeploy": "npm run build:dev",
-            "public": "dist/out-tsc/web/browser",
-            "ignore": [
-                "firebase.json",
-                "**/.*",
-                "**/node_modules/**"
-            ],
-            "rewrites": [{
-                "source": "**",
-                "destination": "/index.html"
-            }]
-        },
-        {
-            "target": "prod",
-            "predeploy": "npm run build:prod",
-            "public": "dist/out-tsc/web/browser",
-            "ignore": [
-                "firebase.json",
-                "**/.*",
-                "**/node_modules/**"
-            ],
-            "rewrites": [{
-                "source": "**",
-                "destination": "/index.html"
-            }]
-        }
-    ],
-    "emulators": {
-        "auth": {
-            "port": 9099
-        },
-        "functions": {
-            "port": 5001
-        },
-        "database": {
-            "port": 9000
-        },
-        "hosting": {
-            "port": 4201
-        },
-        "storage": {
-            "port": 9199
-        },
-        "ui": {
-            "enabled": true
-        },
-        "singleProjectMode": true
-    }
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
 }

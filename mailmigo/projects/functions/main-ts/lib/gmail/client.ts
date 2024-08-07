@@ -1,6 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import { gmail_v1, google } from "googleapis";
 import * as logger from "firebase-functions/logger";
+import MailComposer from "nodemailer/lib/mail-composer";
 
 export class GmailClient {
   oAuth: OAuth2Client;
@@ -39,13 +40,13 @@ export class GmailClient {
         throw Error("Failed to fetch history, no history");
       }
       const messages = history[history.length - 1].messagesAdded;
+      console.log(JSON.stringify(history));
       if (!messages) throw Error("Failed to fetch history, no messages");
       const messageId = messages[messages.length - 1].message?.id;
       if (!messageId) throw Error("Failed to fetch history, no message id");
       return messageId;
     } catch (e) {
       const errorMsg = `Failed to get email with historyId: ${historyId}`;
-      logger.error(errorMsg);
       logger.error(e);
       throw new Error(errorMsg);
     }
@@ -74,14 +75,19 @@ export class GmailClient {
       throw Error("No payload parts");
     }
 
-    const attachmentIds: string[] = message.payload.parts
+    const attachmentIds = message.payload.parts
       .filter((part) => part.mimeType === "application/pdf")
-      .map((part) => part.body!.attachmentId!)
-      .filter((id) => id !== null && id !== undefined);
+      .map((part) => {
+        return {
+          name: part.filename ?? `${Date.now()}.pdf`,
+          id: part.body!.attachmentId!,
+        };
+      })
+      .filter(({ id }) => id !== null && id !== undefined);
     try {
-      const attachmentPromises = attachmentIds.map((id: string) => {
+      const attachmentPromises = attachmentIds.map(({ name, id }) => {
         if (!message.id) throw Error("Invalid ID");
-        return this.getAttachmentById(message.id, id);
+        return this.getAttachmentById(message.id, name, id);
       });
       return Promise.all(attachmentPromises);
     } catch (e) {
@@ -92,14 +98,18 @@ export class GmailClient {
     }
   }
 
-  private async getAttachmentById(messageId: string, attachmentId: string) {
+  private async getAttachmentById(
+    messageId: string,
+    name: string,
+    attachmentId: string,
+  ) {
     try {
       const attachment = await this.gmail.users.messages.attachments.get({
         userId: "me",
         messageId,
         id: attachmentId,
       });
-      return attachment.data;
+      return { name, data: attachment.data.data };
     } catch (e) {
       const errorMsg = `Failed to get attachment with: messageId: ${messageId}, attachmentId: ${attachmentId}`;
       logger.error(errorMsg);
@@ -154,6 +164,77 @@ export class GmailClient {
     } catch (error) {
       console.error("Error sending message:", error);
       return null;
+    }
+  }
+
+  public async replyToEmailWithFile(messageId: string, buffer: Buffer) {
+    try {
+      const message = await this.getMessageById(messageId);
+      const threadId = message.threadId;
+      const fromHeader = message.payload!.headers!.find(
+        (header) => header.name === "From",
+      );
+      const toHeader = message.payload!.headers!.find(
+        (header) => header.name === "To",
+      );
+
+      if (!fromHeader) {
+        console.error('Unable to find the "From" header in the message.');
+        return;
+      }
+
+      const mailOptions = {
+        from: toHeader?.value ?? undefined,
+        to: fromHeader.value ?? undefined,
+        subject:
+          "Re: " +
+          message.payload!.headers!.find(
+            (header: any) => header.name === "Subject",
+          )?.value,
+        text: "Here is the requested summary.",
+        inReplyTo:
+          message.payload!.headers!.find(
+            (header: any) => header.name === "Message-ID",
+          )?.value ?? undefined,
+        references:
+          message.payload!.headers!.find(
+            (header: any) => header.name === "Message-ID",
+          )?.value ?? undefined,
+        attachments: [
+          {
+            filename: "summary.pdf",
+            content: buffer,
+          },
+        ],
+      };
+
+      const mail = await new MailComposer(mailOptions).compile();
+      const rawMessage = await new Promise<string>((resolve, reject) => {
+        mail.build((err: any, message: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(
+              message
+                .toString("base64")
+                .replace(/\+/g, "-")
+                .replace(/\//g, "_")
+                .replace(/=+$/, ""),
+            );
+          }
+        });
+      });
+
+      // Send the reply with attachment
+      await this.gmail.users.messages.send({
+        userId: "me",
+        requestBody: {
+          raw: rawMessage,
+          threadId,
+        },
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 }

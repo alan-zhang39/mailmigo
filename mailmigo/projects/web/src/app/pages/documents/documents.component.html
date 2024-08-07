@@ -1,0 +1,85 @@
+<div class="mb-4 flex justify-end">
+  <p-fileUpload
+    #fileInput
+    name="document"
+    accept=".pdf"
+    mode="basic"
+    auto="true"
+    [customUpload]="true"
+    (uploadHandler)="onUpload($event, fileInput)"
+    chooseLabel="Upload File"
+    class="mt-4 self-start"
+  ></p-fileUpload>
+</div>
+
+<section class="mt-8 w-full">
+  <div class="container mx-auto rounded-md bg-white p-4 shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-bold">My Documents</h2>
+      <div class="flex space-x-4">
+        <button
+          pButton
+          pRipple
+          class="font-normal"
+          (click)="filtersApplied ? resetFilters() : showFilterDialog()"
+          icon="pi pi-filter"
+          [label]="filtersApplied ? 'Reset Filter' : 'Add Filter'"
+        ></button>
+        <input
+          type="text"
+          placeholder="Search by title"
+          class="p-inputtext p-component"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+
+    <p-table class="w-full" [value]="paginatedRecords()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>File</th>
+          <th>Uploaded</th>
+          <th class="text-center">Chat with Document</th>
+          <th class="text-center">Preview Document</th>
+          <th class="text-center">Delete</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-doc>
+        <tr>
+          <td class="pb-4 pt-4 text-grey-600">{{ doc.filename }}</td>
+          <td>{{ doc.timestamp | date: "short" }}</td>
+          <td class="text-center">
+            <button
+              pButton
+              icon="pi pi-comments"
+              class="p-button-rounded"
+              (click)="chatWithDocument(doc)"
+            ></button>
+          </td>
+          <td class="text-center">
+            <button
+              pButton
+              icon="pi pi-eye"
+              class="p-button-rounded"
+              (click)="previewDocument(doc)"
+            ></button>
+          </td>
+          <td class="text-center">
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-rounded"
+              (click)="deleteDocument(doc.id)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator
+      [rows]="rows"
+      [totalRecords]="totalRecords()"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
+  </div>
+  <p-toast></p-toast>
+</section>

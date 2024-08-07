@@ -1,0 +1,6 @@
+<span
+  class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
+  [ngClass]="typeClassMap[type]"
+>
+  <i [ngClass]="iconClassMap[type]" class="mr-2"></i>{{ transformType(type) }}
+</span>

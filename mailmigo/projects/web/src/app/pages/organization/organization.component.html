@@ -1,0 +1,48 @@
+<div class="container mx-auto max-w-lg p-4">
+  <div *ngIf="org.isNone()" class="text-center">
+    <p class="mb-4 text-2xl">You are not currently part of an organization.</p>
+    <div class="mb-4">
+      <input
+        pInputText
+        [(ngModel)]="orgName"
+        placeholder="Organization Name"
+        class="w-full rounded border p-2"
+      />
+    </div>
+    <button
+      pButton
+      icon="pi pi-plus"
+      label="Create organization"
+      (click)="createOrg()"
+      [disabled]="orgName.length === 0"
+      class="w-full p-2"
+    ></button>
+  </div>
+
+  <div *ngIf="org.isSome()" class="rounded bg-white p-4 shadow">
+    <h2 class="mb-4 text-3xl font-bold">{{ org.unwrap()!.name }}</h2>
+    <p class="mb-2 text-xl">
+      Your Role:
+      {{ org.unwrap()!.members[auth.user()!.uid] ? "Admin" : "Member" }}
+    </p>
+    <p class="mb-2 text-xl">
+      Total organization members: {{ count(org.unwrap()!.members) }}
+    </p>
+    <div *ngIf="org.unwrap()!.members[auth.user()!.uid]" class="mt-4">
+      <p class="mb-2 text-lg">
+        To invite others to join this organization, please provide this link:
+      </p>
+      <div class="flex items-center">
+        <input pInputText [value]="inviteUrl" class="mr-2 flex-grow" readonly />
+        <button
+          pButton
+          icon="pi pi-copy"
+          label="Copy"
+          (click)="copyToClipboard()"
+          class="p-2"
+        ></button>
+      </div>
+    </div>
+  </div>
+  <p-toast></p-toast>
+</div>

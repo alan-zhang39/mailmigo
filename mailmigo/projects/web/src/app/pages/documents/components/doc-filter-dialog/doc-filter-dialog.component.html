@@ -1,0 +1,15 @@
+<div class="p-fluid">
+  <div class="p-field mb-4">
+    <label class="mb-4">Date Range</label>
+    <div class="h-[10px]"></div>
+    <p-calendar
+      id="dateRange"
+      [showIcon]="true"
+      [showOnFocus]="false"
+      [(ngModel)]="dateRange"
+      selectionMode="range"
+      dateFormat="MM dd, yy"
+    ></p-calendar>
+  </div>
+  <button pButton label="Apply" (click)="applyFilter()"></button>
+</div>

@@ -1,0 +1,7 @@
+<div class="flex">
+    <app-menu></app-menu>
+    <div class="mx-[6rem] w-full">
+        <h1 *ngIf="headerTitle" class="mt-12">{{ headerTitle }}</h1>
+        <router-outlet></router-outlet>
+    </div>
+</div>

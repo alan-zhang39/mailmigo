@@ -1,0 +1,50 @@
+<div class="p-fluid">
+  <div class="p-field mb-4">
+    <label class="mb-4">Filter By</label>
+    <div class="h-[10px]"></div>
+    <div class="flex flex-col space-y-2">
+      <div>
+        <p-checkbox
+          [(ngModel)]="filterByType"
+          binary="true"
+          label="Generation Type"
+        ></p-checkbox>
+      </div>
+      <div>
+        <p-checkbox
+          [(ngModel)]="filterByDate"
+          binary="true"
+          label="Date"
+        ></p-checkbox>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filterByType" class="p-field mb-4">
+    <label class="mb-4">Generation Type</label>
+    <div class="h-[10px]"></div>
+    <p-multiSelect
+      id="generationType"
+      [options]="generationTypes"
+      [(ngModel)]="selectedTypes"
+      optionLabel="label"
+      placeholder="Select types"
+      class=""
+    ></p-multiSelect>
+  </div>
+
+  <div *ngIf="filterByDate" class="p-field mb-6">
+    <label class="mb-4">Date</label>
+    <div class="h-[10px]"></div>
+    <p-calendar
+      id="dateRange"
+      [showIcon]="true"
+      [showOnFocus]="false"
+      [(ngModel)]="dateRange"
+      selectionMode="range"
+      dateFormat="MM dd, yy"
+    ></p-calendar>
+  </div>
+
+  <button pButton label="Done" (click)="applyFilter()"></button>
+</div>

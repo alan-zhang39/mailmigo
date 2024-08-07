@@ -1,30 +1,52 @@
-import { Injectable, Signal, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { inject } from '@angular/core';
+import { Injectable, Signal, computed } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { inject } from "@angular/core";
 import {
   Database,
   TransactionResult,
   connectDatabaseEmulator,
-  objectVal,
   ref,
-} from '@angular/fire/database';
-
-import { runTransaction } from '@angular/fire/database';
-import environment from '@environments/environment';
-import { EnvironmentType } from '@environments/types';
-import { Option } from '@shared/types/rust/option';
+  objectVal,
+  set,
+  update,
+  remove,
+  Query,
+  push,
+  onValue,
+  onChildAdded,
+  onChildChanged,
+  query,
+  orderByChild,
+  limitToLast,
+  startAfter,
+} from "@angular/fire/database";
+import { runTransaction, Unsubscribe } from "@angular/fire/database";
+import environment from "@environments/environment";
+import { EnvironmentType } from "@environments/types";
+import { Option } from "@shared/types/rust/option";
+// @ts-ignore
+import { DataSnapshot } from "@angular/fire/compat/database/interfaces";
+import { Observable, skip, take } from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class DatabaseService {
-  private database = inject(Database);
+  public database = inject(Database);
 
   constructor() {
     if (environment.type == EnvironmentType.LOCAL) {
       // Point to the RTDB emulator running on localhost.
-      connectDatabaseEmulator(this.database, '127.0.0.1', 9000);
+      connectDatabaseEmulator(this.database, "127.0.0.1", 9000);
     }
+  }
+
+  public get<T extends string | number | boolean | object>(path: string) {
+    const dbRef = ref(this.database, path);
+    const obs$ = objectVal<T>(dbRef);
+    return new Promise<T>((res, rej) => {
+      obs$.pipe(take(1)).subscribe({ next: res, error: rej });
+    });
   }
 
   // Used if want to handle undefined case while fetching.
@@ -34,6 +56,23 @@ export class DatabaseService {
     const dbRef = ref(this.database, path);
     const obs$ = objectVal<T>(dbRef);
     const signal = toSignal<T>(obs$);
+    return computed(() =>
+      signal() !== undefined ? Option.Some(signal() as T) : Option.None(),
+    );
+  }
+
+  public observable<T extends string | number | boolean | object>(
+    path: string,
+  ): Observable<T | null> {
+    const dbRef = ref(this.database, path);
+    const obs$ = objectVal<T | null>(dbRef);
+    return obs$;
+  }
+
+  public observableToSignal<T extends string | number | boolean | object>(
+    obs: Observable<T | null | undefined>,
+  ): Signal<Option<T>> {
+    const signal = toSignal<T | null | undefined>(obs);
     return computed(() =>
       signal() !== undefined ? Option.Some(signal() as T) : Option.None(),
     );
@@ -52,11 +91,101 @@ export class DatabaseService {
     );
   }
 
+  public observeQueryWithInitial<T extends string | number | boolean | object>(
+    query: Query,
+    initialValue: T,
+  ): Signal<T> {
+    const obs$ = objectVal<T>(query);
+    const signal = toSignal<T>(obs$);
+    return computed(() =>
+      signal() !== undefined ? (signal() as T) : initialValue,
+    );
+  }
+
+  // Listen for child added. Specify either path string to listen to path, or query if more parameters are needed
+  public subscribeChildAdded<T extends string | Query>(
+    callback: (snapshot: DataSnapshot) => void,
+    query: T,
+  ): Unsubscribe {
+    let q;
+    if (typeof query === "string") {
+      q = ref(this.database, query);
+    } else {
+      q = query;
+    }
+    return onChildAdded(q, (snapshot) => callback(snapshot));
+  }
+
+  public subscribeChildChanged<T extends string | Query>(
+    callback: (snapshot: DataSnapshot) => void,
+    query: T,
+  ): Unsubscribe {
+    let q;
+    if (typeof query === "string") {
+      q = ref(this.database, query);
+    } else {
+      q = query;
+    }
+    return onChildChanged(q, (snapshot) => callback(snapshot));
+  }
+
+  public subscribeOnValue<T extends string | Query>(
+    callback: (snapshot: DataSnapshot) => void,
+    query: T,
+  ): Unsubscribe {
+    let q;
+    if (typeof query === "string") {
+      q = ref(this.database, query);
+    } else {
+      q = query;
+    }
+    return onValue(q, (snapshot) => callback(snapshot));
+  }
+
   public transact<T extends string | number | boolean | object>(
     path: string,
     transaction: (currentData: T) => T,
   ): Promise<TransactionResult> {
     const dbRef = ref(this.database, path);
     return runTransaction(dbRef, transaction);
+  }
+
+  // Set data at `path`
+  public set<T extends string | number | boolean | object>(
+    path: string,
+    data: T,
+  ): Promise<void> {
+    const dbRef = ref(this.database, path);
+    return set(dbRef, data);
+  }
+
+  // Push data to new key at `path`.
+  // If successful, the new key will be returned.
+  public async push<T extends object>(
+    path: string,
+    data: T,
+  ): Promise<string | null> {
+    const dbRef = ref(this.database, path);
+    try {
+      const pushed = await push(dbRef);
+      const payload = { ...data, id: pushed.key };
+      await set(pushed, payload);
+      return pushed.key;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  // Update data at `path`
+  public update<T extends object>(path: string, data: T): Promise<void> {
+    const dbRef = ref(this.database, path);
+    return update(dbRef, data);
+  }
+
+  // Remove the data at `path`.
+  public remove(path: string): Promise<void> {
+    const dbRef = ref(this.database, path);
+    return remove(dbRef);
   }
 }

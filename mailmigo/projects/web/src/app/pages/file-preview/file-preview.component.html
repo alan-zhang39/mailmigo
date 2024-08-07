@@ -1,0 +1,8 @@
+<div class="flex h-screen w-full flex-col">
+  <h2></h2>
+  <app-file-frame
+    *ngIf="fileService.current.isSome()"
+    [data]="fileService.current.unwrap().data"
+    class="flex grow"
+  />
+</div>

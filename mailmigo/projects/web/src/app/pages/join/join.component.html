@@ -1,0 +1,28 @@
+<div class="flex h-screen w-full grow items-center justify-center pb-40">
+  <div
+    *ngIf="!loading && org().isSome() && org().unwrap() != null"
+    class="text-center text-2xl"
+  >
+    <p>You've been invited to join the following MailMigo organization:</p>
+    <p class="text-4xl">
+      {{ org().unwrap().name }}
+    </p>
+    <button
+      pButton
+      pRipple
+      class="text-xl"
+      (click)="join()"
+      label="Join Organization"
+    ></button>
+  </div>
+  <p *ngIf="!loading && org().isSome() && org().unwrap() == null">
+    This is an invalid organization join URL. Please check the URL and try
+    again.
+  </p>
+  <p-progressSpinner
+    *ngIf="org().isNone() || loading"
+    styleClass="w-4rem h-4rem"
+    strokeWidth="8"
+    animationDuration=".5s"
+  />
+</div>

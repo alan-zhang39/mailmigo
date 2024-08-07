@@ -1,0 +1,75 @@
+<div class="flex h-screen items-center justify-center">
+  <app-logo></app-logo>
+
+  <div *ngIf="!isSubmitting" class="w-80 pb-24 text-center">
+    <p class="text-2xl font-medium">Create an account</p>
+    <p class="mt-1.5 font-light">Enter your email to get started!</p>
+    <form action="/login" method="POST">
+      <input
+        #userFullName
+        pInputText
+        required
+        type="text"
+        class="mt-4 w-full rounded-md border pl-2 placeholder:text-slate-400"
+        name="userFullName"
+        placeholder="Full Name"
+      />
+      <input
+        #userEmail
+        pInputText
+        required
+        type="email"
+        class="mt-4 w-full rounded-md border pl-2 placeholder:text-slate-400"
+        name="userEmail"
+        placeholder="email@domain.com"
+      />
+      <input
+        #userPass
+        pInputText
+        required
+        type="password"
+        class="mt-4 w-full rounded-md border pl-2 placeholder:text-slate-400"
+        name="userPass"
+        placeholder="Password"
+      />
+      <button
+        pButton
+        #submitForEmail
+        type="button"
+        (click)="loginWithEmail(userFullName.value, userEmail.value, userPass.value)"
+        label="Sign up with email"
+        class="mt-4 w-full bg-black text-white text-sm font-semibold"
+      ></button>
+    </form>
+    <div class="mt-5 flex items-center">
+      <div class="flex-grow border-t border-gray-300"></div>
+      <span class="px-1 text-sm text-gray-400">or continue with</span>
+      <div class="flex-grow border-t border-gray-300"></div>
+    </div>
+    <button
+      #submitForGoogle
+      (click)="loginWithGoogle()"
+      class="mt-4 block h-7 w-full rounded-md border border-zinc-100 bg-zinc-100 px-4 pb-8 pt-1 shadow-md hover:border-zinc-200 hover:bg-zinc-200 cursor-pointer"
+    >
+      <img
+        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+        alt="Google"
+        class="float-left mt-1 inline h-5 w-5"
+      />
+      <span class="mr-7 mt-1.5 inline-block font-semibold">Google</span>
+    </button>
+    <p class="mt-5 items-center text-sm text-gray-400">
+      By clicking continue, you agree to our
+      <a href="#" class="text-black">Terms of Service</a> and
+      <a href="#" class="text-black">Privacy Policy</a>
+    </p>
+    <p class="mt-5 items-center text-sm text-gray-400">
+      Already have a MailMigo account?<br />
+      <a [routerLink]="'/sign-in'" class="text-black">Sign in now</a>
+    </p>
+  </div>
+
+  <div *ngIf="isSubmitting">
+    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+  </div>
+</div>
