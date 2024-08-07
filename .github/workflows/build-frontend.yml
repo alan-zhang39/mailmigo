@@ -56,6 +56,7 @@ jobs:
       - name: SSH into VM and deploy container
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} << 'EOF'
+            docker login https://ghcr.io -u ChadRosseau -p ${{ secrets.CR_PAT }} 
             docker pull ${{ github.repository_owner }}/frontend-mailmigo:latest
             docker stop frontend-mailmigo || true
             docker rm frontend-mailmigo || true
