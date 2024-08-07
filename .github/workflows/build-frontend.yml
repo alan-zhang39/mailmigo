@@ -7,7 +7,7 @@ on:
       - main
     # Only run this workflow if the commit has modified files from frontend
     paths:
-      - frontend/**
+      - mailmigo/projects/web/**
 
 env:
   IMAGE_NAME: frontend-mailmigo
