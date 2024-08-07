@@ -10,16 +10,18 @@ on:
 jobs:
   push:
     runs-on: ubuntu-latest
-    - name: Add SSH key
-      uses: webfactory/ssh-agent@v0.8.1
-      with:
-        ssh-private-key: ${{ secrets.VM_SSH_KEY }}
 
-    - name: SSH into VM and deploy container
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} << 'EOF'
-          docker pull ${{ github.repository_owner }}/frontend-mailmigo:latest
-          docker stop frontend-mailmigo || true
-          docker rm frontend-mailmigo || true
-          docker run -d --name frontend-mailmigo -p 80:80 ${{ github.repository_owner }}/frontend-mailmigo:latest
-        EOF
+    steps:
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: SSH into VM and deploy container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} << 'EOF'
+            docker pull ${{ github.repository_owner }}/frontend-mailmigo:latest
+            docker stop frontend-mailmigo || true
+            docker rm frontend-mailmigo || true
+            docker run -d --name frontend-mailmigo -p 80:80 ${{ github.repository_owner }}/frontend-mailmigo:latest
+          EOF
