@@ -1,5 +1,6 @@
 import { Environment, EnvironmentType } from "./types";
 
+// Check env existence
 if (process.env["WEB_ENV"] === undefined)
   throw Error("WEB_ENV environment var not set");
 
