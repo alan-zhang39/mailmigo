@@ -1,6 +1,8 @@
 # Build the Angular App
 # basically, this compiles the Angular project to static HTML and js files.
 FROM node:20-alpine as build
+ARG WEBENV
+ENV WEBENV=${WEBENV}
 WORKDIR /app
 RUN npm -g install npm@10.8.1
 COPY . ./
@@ -14,6 +16,8 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent
 RUN ls
+RUN touch /app/projects/web/src/environments/environment.ts
+RUN echo "$WEBENV" >> /app/projects/web/src/environments/environment.dev.ts
 RUN npm run build
 
 # Serve these static files with NGINX.
