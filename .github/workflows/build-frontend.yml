@@ -58,7 +58,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} << 'EOF'
             sudo usermod -aG docker $USER
             docker login https://ghcr.io -u ChadRosseau -p ${{ secrets.CR_PAT }} 
-            docker pull ghcr.io/${{ github.repository_owner }}/frontend-mailmigo:latest
+            IMAGE_ID=ghcr.io/${{ github.repository_owner }}/frontend-mailmigo:latest
+            IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+            docker pull $IMAGE_ID
             docker stop frontend-mailmigo || true
             docker rm frontend-mailmigo || true
             docker run -d --name frontend-mailmigo -p 80:80 ${{ github.repository_owner }}/frontend-mailmigo:latest
