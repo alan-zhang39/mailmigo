@@ -13,6 +13,7 @@ COPY angular.json ./
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent
+RUN ls
 RUN npm run build
 
 # Serve these static files with NGINX.
