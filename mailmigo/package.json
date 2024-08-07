@@ -8,6 +8,7 @@
     "build": "ng build",
     "build:dev": "ng build --configuration=development",
     "build:prod": "ng build --configuration=production",
+    "build:deploy": "ng build --configuration=deploy",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "deploy:preview": "git rev-parse --abbrev-ref HEAD | xargs -I {} firebase hosting:channel:deploy {}",

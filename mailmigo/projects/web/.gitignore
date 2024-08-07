@@ -3,4 +3,5 @@ node_modules/
 # Environments
 src/environments/**.ts
 !src/environments/environment.sample.ts
+!src/environments/environment.deploy.ts
 !src/environments/types.ts

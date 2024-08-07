@@ -23,7 +23,7 @@ RUN cat <<EOF > projects/web/src/environments/environment.dev.ts
 "$WEBENV"
 EOF
 RUN ls projects/web/src/environments
-RUN npm run build
+RUN npm run build:deploy
 
 # Serve these static files with NGINX.
 FROM nginx:1.21.6-alpine

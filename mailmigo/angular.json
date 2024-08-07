@@ -72,6 +72,17 @@
                 }
               ]
             },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/web/src/environments/environment.ts",
+                  "with": "projects/web/src/environments/environment.deploy.ts"
+                }
+              ]
+            },
             "local": {
               "optimization": false,
               "extractLicenses": false,
@@ -88,6 +99,9 @@
             },
             "development": {
               "buildTarget": "web:build:development"
+            },
+            "deploy": {
+              "buildTarget": "web:build:deploy"
             },
             "local": {
               "buildTarget": "web:build:local"
