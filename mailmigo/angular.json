@@ -72,7 +72,7 @@
                 }
               ]
             },
-            "development": {
+            "deploy": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,

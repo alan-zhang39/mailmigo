@@ -15,13 +15,7 @@ COPY angular.json ./
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent
-RUN ls
-RUN cat <<EOF > projects/web/src/environments/environment.ts
-"$WEBENV"
-EOF
-RUN cat <<EOF > projects/web/src/environments/environment.dev.ts
-"$WEBENV"
-EOF
+RUN touch projects/web/src/environments/environment.ts
 RUN ls projects/web/src/environments
 RUN npm run build:deploy
 
