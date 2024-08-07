@@ -63,7 +63,5 @@ jobs:
             docker pull $IMAGE_ID
             docker stop frontend-mailmigo || true
             docker rm frontend-mailmigo || true
-            IMAGE_ID=${{ github.repository_owner }}/frontend-mailmigo:latest
-            IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
             docker run -d --name frontend-mailmigo -p 80:80 $IMAGE_ID
           EOF
