@@ -16,8 +16,9 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent
 RUN ls
-RUN touch /app/projects/web/src/environments/environment.ts
-RUN echo "$WEBENV" >> /app/projects/web/src/environments/environment.dev.ts
+RUN echo "\n" >> projects/web/src/environments/environment.ts
+RUN echo "$WEBENV" >> projects/web/src/environments/environment.dev.ts
+RUN ls projects/web/src/environments
 RUN npm run build
 
 # Serve these static files with NGINX.
